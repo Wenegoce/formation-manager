@@ -1,0 +1,2801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Manager - WeNégoce</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #F3FEFF 0%, #57976E 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            color: #333;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 3px solid #3270AF;
+        }
+
+        .header-logo {
+            flex-shrink: 0;
+        }
+
+        .header-logo img {
+            height: 60px;
+            width: auto;
+        }
+
+        .header-content {
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #3270AF;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            color: #666;
+        }
+
+        .tab.active {
+            background: white;
+            color: #3270AF;
+            border-bottom: 3px solid #3270AF;
+        }
+
+        .tab:hover:not(.active) {
+            background: #ebebeb;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"], input[type="time"] {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3270AF;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stagiaire-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3270AF;
+        }
+
+        .stagiaire-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .stagiaire-number {
+            background: #3270AF;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn {
+            background: #3270AF;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #265a8f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(50,112,175,0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+
+        .info-display {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 180px;
+            color: #3270AF;
+        }
+
+        .stars {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            color: #ddd;
+        }
+
+        .star.active {
+            color: #ffd700;
+        }
+
+        .star:hover {
+            transform: scale(1.2);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-item input[type="radio"] {
+            width: auto;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .switch-label {
+            font-weight: 600;
+            color: #999;
+            min-width: 110px;
+            transition: color 0.3s;
+        }
+
+        .switch-label.active {
+            color: #3270AF;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #3270AF;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #28a745;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .radio-item:has(input[type="radio"]:checked) {
+            background-color: #3270AF !important;
+            color: white !important;
+            border-color: #3270AF !important;
+        }
+
+        .radio-item input[type="radio"]:checked {
+            accent-color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3270AF 0%, #265a8f 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-edit {
+            background: #3270AF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit:hover {
+            background: #265a8f;
+            transform: translateY(-2px);
+        }
+
+        .version-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .version-info .version-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3270AF;
+            margin-bottom: 5px;
+        }
+
+        .version-info .version-date {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .version-info .copyright {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .formation-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .formation-card:hover {
+            border-color: #3270AF;
+            box-shadow: 0 4px 12px rgba(50,112,175,0.15);
+        }
+
+        .formation-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .formation-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3270AF;
+        }
+
+        .formation-card-date {
+            background: #3270AF;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .formation-card-body {
+            margin-bottom: 15px;
+        }
+
+        .formation-card-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .formation-card-label {
+            font-weight: 600;
+            min-width: 140px;
+            color: #666;
+        }
+
+        .formation-card-value {
+            color: #333;
+        }
+
+        /* Optimisations Mobile */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 8px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .header-logo img {
+                height: 50px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                margin-top: 10px;
+                margin-left: 0 !important;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-item {
+                min-width: 100%;
+            }
+
+            .stars {
+                justify-content: center;
+            }
+
+            .star {
+                font-size: 36px;
+            }
+
+            /* Stagiaire items */
+            .stagiaire-item {
+                padding: 12px;
+            }
+
+            .stagiaire-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            /* Modal plein écran sur mobile */
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h3 {
+                font-size: 18px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            /* Alert */
+            .alert {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            /* Titres */
+            h2 {
+                font-size: 20px !important;
+            }
+
+            h3 {
+                font-size: 18px !important;
+            }
+
+            h4 {
+                font-size: 16px !important;
+            }
+
+            /* Formulaire de satisfaction */
+            #satisfactionForm .form-group {
+                margin-bottom: 25px;
+            }
+
+            /* Bouton test et envoi */
+            .btn-edit {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            /* Switch container */
+            .switch-container {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+
+            /* Petits textes plus lisibles */
+            small {
+                font-size: 13px !important;
+            }
+
+            /* Espacement des sections */
+            .form-group {
+                margin-bottom: 25px;
+            }
+        }
+
+        /* Très petits écrans (moins de 400px) */
+        @media screen and (max-width: 400px) {
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .tab {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 14px 20px;
+            }
+
+            .star {
+                font-size: 36px;
+                gap: 8px;
+            }
+
+            .stars {
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">
+                <img src="https://back.wenegoce.fr/uploads/0406_Logo_We_Negoce_avec_We_Soft_DEFINITIF_502368ceeb.png" alt="WeNégoce">
+            </div>
+            <div class="header-content">
+                <h1>Formation Manager</h1>
+                <p>Suivi des présences et enquête de satisfaction stagiaires</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="formateur">👨‍🏫 Espace Formateur</button>
+            <button class="tab" data-tab="formations">📋 Formations</button>
+            <button class="tab" data-tab="stagiaire">👤 Espace Stagiaire</button>
+            <button class="tab" data-tab="settings">⚙️ Paramètres</button>
+        </div>
+
+        <div class="content">
+            <div id="formateur" class="tab-content active">
+                <h2 style="margin-bottom: 20px; color: #3270AF;">Préparation de la formation</h2>
+                
+                <div id="preparationForm">
+                    <form id="formateurForm">
+                        <div class="form-group">
+                            <label>Raison sociale du client *</label>
+                            <input type="text" id="raisonSociale" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Thème de la formation *</label>
+                            <input type="text" id="themeFormation" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Référence JIRA</label>
+                            <input type="text" id="referenceJira" placeholder="TIC-123, SMC-456 ou SNC-789">
+                            <small style="color: #999; font-size: 12px;">Format : TIC-, SMC- ou SNC- suivi d'un numéro (optionnel)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nom du formateur *</label>
+                            <input type="text" id="nomFormateur" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Date de la formation *</label>
+                                <input type="date" id="dateFormation" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Type de formation *</label>
+                                <div class="switch-container">
+                                    <span class="switch-label active" id="labelPresentiel">🏢 Présentiel</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="typeFormationToggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="switch-label" id="labelVisio">💻 Visio</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Heure de début *</label>
+                                <input type="time" id="heureDebut" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Heure de fin *</label>
+                                <input type="time" id="heureFin" required>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 30px 0 15px; color: #3270AF;">Liste des stagiaires</h3>
+                        
+                        <div id="stagiairesList"></div>
+
+                        <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" id="btnAddStagiaire">
+                                ➕ Ajouter un stagiaire
+                            </button>
+                            <button type="submit" class="btn">📝 Feuille de présence</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="postFormationSection" style="display: none;">
+                    <div class="alert alert-info">
+                        ℹ️ <strong>Formation enregistrée !</strong> Une fois la formation terminée, complétez la présence de chaque stagiaire ci-dessous.
+                    </div>
+
+                    <div id="formationInfo" class="info-display" style="margin-bottom: 30px;"></div>
+
+                    <h3 style="margin-bottom: 20px; color: #3270AF;">Compléter les présences</h3>
+                    
+                    <form id="presenceForm">
+                        <div id="presenceList"></div>
+                        <div style="margin-top: 30px;">
+                            <button type="submit" class="btn">📧 Générer et envoyer les liens stagiaires</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="linksGenerated" style="display: none; margin-top: 30px;">
+                    <div class="alert alert-success">
+                        ✅ Les liens ont été générés avec succès ! Vous pouvez maintenant envoyer les emails aux stagiaires.
+                    </div>
+                    <div id="emailLinks"></div>
+                </div>
+            </div>
+
+            <div id="formations" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #3270AF;">📋 Mes Formations</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ Sélectionnez une formation pour envoyer les liens d'enquête de satisfaction aux stagiaires.
+                </div>
+
+                <div id="formationsLoading" style="text-align: center; padding: 40px; color: #666;">
+                    🔄 Chargement des formations...
+                </div>
+
+                <div id="formationsList" style="display: none;">
+                    <!-- La liste des formations sera générée ici -->
+                </div>
+
+                <div id="formationsEmpty" style="display: none; text-align: center; padding: 40px; color: #999;">
+                    📭 Aucune formation trouvée.
+                </div>
+            </div>
+
+            <div id="stagiaire" class="tab-content">
+                <div id="stagiaireView">
+                    <div class="alert alert-info">
+                        ℹ️ Cette page est accessible via le lien envoyé par email par votre formateur.
+                    </div>
+
+                    <h2 style="margin-bottom: 20px; color: #3270AF;">Attestation de formation</h2>
+                    
+                    <div class="info-display" id="infoFormation">
+                        <p style="text-align: center; color: #666;">En attente du lien personnalisé...</p>
+                    </div>
+
+                    <form id="satisfactionForm" style="display: none;">
+                        <h3 style="margin: 30px 0 20px; color: #3270AF;">📋 Enquête de satisfaction</h3>
+
+                        <div class="form-group">
+                            <label>La formation a-t-elle répondu à vos attentes ? *</label>
+                            <div class="stars" id="q1Stars"></div>
+                            <input type="hidden" id="q1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Les objectifs de la formation étaient-ils clairs et bien expliqués ? *</label>
+                            <div class="stars" id="q2Stars"></div>
+                            <input type="hidden" id="q2" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Le formateur a-t-il su rendre la session claire, dynamique et adaptée à votre niveau ? *</label>
+                            <div class="stars" id="q3Stars"></div>
+                            <input type="hidden" id="q3" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Vous sentez-vous à présent à l'aise pour utiliser les fonctions présentées lors de cette formation ? *</label>
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="q4" value="Pas du tout" required>
+                                    <span>Pas du tout</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="q4" value="Un peu" required>
+                                    <span>Un peu</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="q4" value="Moyennement" required>
+                                    <span>Moyennement</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="q4" value="Assez" required>
+                                    <span>Assez</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="q4" value="Tout à fait" required>
+                                    <span>Tout à fait</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Comment jugez-vous la durée de la formation ? *</label>
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="q5" value="Trop courte" required>
+                                    <span>Trop courte</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="q5" value="Adaptée" required>
+                                    <span>Adaptée</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="q5" value="Trop longue" required>
+                                    <span>Trop longue</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quelles sont vos suggestions pour améliorer cette formation ?</label>
+                            <textarea id="q6" maxlength="100" rows="3" placeholder="Maximum 100 caractères"></textarea>
+                            <small style="color: #666;">Caractères restants: <span id="q6Count">100</span></small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Un dernier commentaire ?</label>
+                            <textarea id="q7" maxlength="100" rows="3" placeholder="Maximum 100 caractères"></textarea>
+                            <small style="color: #666;">Caractères restants: <span id="q7Count">100</span></small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">📤 Envoyer mon évaluation</button>
+                    </form>
+
+                    <div id="thankYouMessage" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div id="settings" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #3270AF;">⚙️ Paramètres & Configuration Make</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ Configurez ici votre intégration Make pour envoyer automatiquement les données vers SharePoint.
+                </div>
+
+                <div style="background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #3270AF; margin-bottom: 15px;">🔗 Configuration Make</h3>
+                    
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">URL Webhook Formation (POST) :</label>
+                        <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Utilisé pour : <strong>Créer une formation</strong> et <strong>Enregistrer les satisfactions</strong></p>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; font-family: 'Courier New', monospace; font-size: 12px; word-break: break-all; margin-bottom: 10px;" id="webhookDisplay">Non configurée</div>
+                        <button class="btn btn-secondary" onclick="copyWebhookURL()" style="margin: 0;">📋 Copier l'URL</button>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Changer l'URL Webhook Formation :</label>
+                        <textarea id="webhookInput" placeholder="https://hook.eu2.make.com/..." rows="3" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 12px; font-family: 'Courier New', monospace;"></textarea>
+                        <button class="btn" onclick="updateWebhookURL()" style="margin-top: 10px;">💾 Enregistrer l'URL</button>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">URL Webhook Récupération (GET) :</label>
+                        <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Utilisé pour : <strong>Récupérer une formation existante</strong></p>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; font-family: 'Courier New', monospace; font-size: 12px; word-break: break-all; margin-bottom: 10px;" id="webhookGetDisplay">Non configurée</div>
+                        <button class="btn btn-secondary" onclick="copyWebhookGetURL()" style="margin: 0;">📋 Copier l'URL</button>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Changer l'URL Webhook Récupération :</label>
+                        <textarea id="webhookGetInput" placeholder="https://hook.eu2.make.com/..." rows="3" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 12px; font-family: 'Courier New', monospace;"></textarea>
+                        <button class="btn" onclick="updateWebhookGetURL()" style="margin-top: 10px;">💾 Enregistrer l'URL</button>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Clé API Make :</label>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; font-family: 'Courier New', monospace; font-size: 12px; word-break: break-all; margin-bottom: 10px;" id="apiKeyDisplay">Non configurée</div>
+                        <button class="btn btn-secondary" onclick="copyAPIKey()" style="margin: 0;">📋 Copier la clé</button>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Changer la clé API :</label>
+                        <input type="text" id="apiKeyInput" placeholder="formation-manager-key" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 12px; font-family: 'Courier New', monospace;">
+                        <small style="color: #999; display: block; margin-top: 5px;">Cette clé sera envoyée dans le header "x-make-apikey"</small>
+                        <button class="btn" onclick="updateAPIKey()" style="margin-top: 10px;">💾 Enregistrer la clé</button>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                            <input type="checkbox" id="enableSharePointSync" onchange="toggleSync()" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span>Activer la synchronisation SharePoint</span>
+                        </label>
+                        <p style="font-size: 13px; color: #666; margin-top: 8px;">Les évaluations seront automatiquement envoyées vers votre liste SharePoint via Make.</p>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #3270AF; margin-bottom: 15px;">📊 Données & Stockage</h3>
+                    
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Formations enregistrées :</label>
+                        <div style="color: #666;"><strong id="formationCount">0</strong> formation(s)</div>
+                        <p style="font-size: 13px; color: #999; margin-top: 8px;">💡 Pour gérer vos données, rendez-vous dans l'onglet "Backup & Export"</p>
+                    </div>
+                </div>
+
+                <div class="version-info">
+                    <div class="version-number">Version 2.4.2</div>
+                    <div class="version-date">27 octobre 2025</div>
+                    <div class="copyright">
+                        © 2025 WeNégoce - Tous droits réservés<br>
+                        Formation Manager est une solution propriétaire développée par WeNégoce
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Modifier l'email</h3>
+                <button class="btn-icon" onclick="closeEmailModal()" style="color: white;">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Objet de l'email *</label>
+                    <input type="text" id="emailSubjectEdit" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                </div>
+                <div class="form-group">
+                    <label>Corps du message *</label>
+                    <textarea id="emailBodyEdit" rows="12" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Segoe UI', sans-serif; line-height: 1.6;"></textarea>
+                </div>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="btn" onclick="saveEmailChanges()">
+                        ✓ Terminé
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reminderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📧 Relancer le stagiaire</h3>
+                <button class="btn-icon" onclick="closeReminderModal()" style="color: white;">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="reminderInfo" class="info-display" style="margin-bottom: 20px;"></div>
+                
+                <div class="form-group">
+                    <label>Objet de l'email *</label>
+                    <input type="text" id="reminderSubjectEdit" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                </div>
+                <div class="form-group">
+                    <label>Corps du message *</label>
+                    <textarea id="reminderBodyEdit" rows="12" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Segoe UI', sans-serif; line-height: 1.6;"></textarea>
+                </div>
+                
+                <div class="alert alert-info" style="margin-top: 20px;">
+                    ℹ️ <strong>Note :</strong> Le lien personnalisé sera automatiquement inséré à la place de [LIEN]
+                </div>
+                
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="btn" onclick="closeReminderModal()" style="background: #6c757d; margin-right: 10px;">
+                        Annuler
+                    </button>
+                    <button class="btn" onclick="sendReminder()">
+                        📧 Envoyer la relance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // ========================================
+        // FORMATION MANAGER v2.5.0
+        // Nouveautés v2.5.0 :
+        // - Envoi automatique des données de présence et commentaires à SharePoint lors de la génération des mails
+        // - Chargement automatique de la formation depuis SharePoint pour le stagiaire
+        // ========================================
+        
+        let stagiaireCount = 0;
+        let formationsData = [];
+        let currentFormationId = null;
+        const MAX_STAGIAIRES = 10;
+        let emailSubjectGlobal = '';
+        let emailBodyGlobal = '';
+        let currentFormationData = null;
+        
+        // Configuration Make - Récupérée depuis localStorage
+        let WEBHOOK_URL = localStorage.getItem('wenegoce_webhook') || '';
+        let WEBHOOK_GET_URL = 'https://hook.eu2.make.com/03dl7xtqs4cf4cp5nndun08kz2mdbs58';
+        let API_KEY = localStorage.getItem('wenegoce_apikey') || 'formation-manager-key';
+        let ENABLE_SHAREPOINT_SYNC = localStorage.getItem('wenegoce_sync_enabled') === 'true';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFormations();
+            addStagiaire();
+            initStarRatings();
+            initCharCounters();
+            checkURLParams();
+            initEventListeners();
+            initTypeFormationToggle();
+            initializeSettings();
+            setTodayDate();
+        });
+
+        function setTodayDate() {
+            const dateInput = document.getElementById('dateFormation');
+            if (dateInput && !dateInput.value) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+        }
+
+        function initEventListeners() {
+            document.querySelectorAll('.tab').forEach(button => {
+                button.addEventListener('click', function() {
+                    switchTab(this.getAttribute('data-tab'));
+                });
+            });
+
+            const btnAdd = document.getElementById('btnAddStagiaire');
+            if (btnAdd) {
+                btnAdd.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    addStagiaire();
+                });
+            }
+
+            const formateurForm = document.getElementById('formateurForm');
+            if (formateurForm) {
+                formateurForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleFormateurSubmit();
+                });
+            }
+
+            const champsObligatoires = [
+                'raisonSociale',
+                'themeFormation',
+                'nomFormateur',
+                'dateFormation',
+                'heureDebut',
+                'heureFin'
+            ];
+
+            champsObligatoires.forEach(function(fieldId) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('blur', function() {
+                        validateRequiredField(this);
+                    });
+                    field.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            clearError(this);
+                        }
+                    });
+                }
+            });
+
+            const heureDebut = document.getElementById('heureDebut');
+            const heureFin = document.getElementById('heureFin');
+            
+            if (heureDebut) {
+                heureDebut.addEventListener('change', function() {
+                    validateHeures();
+                });
+            }
+            
+            if (heureFin) {
+                heureFin.addEventListener('change', function() {
+                    validateHeures();
+                });
+                heureFin.addEventListener('blur', function() {
+                    validateHeures();
+                });
+            }
+
+            const dateFormationInput = document.getElementById('dateFormation');
+            if (dateFormationInput) {
+                dateFormationInput.addEventListener('change', function() {
+                    validateDateFormation();
+                });
+            }
+
+            const presenceForm = document.getElementById('presenceForm');
+            if (presenceForm) {
+                presenceForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handlePresenceSubmit();
+                });
+            }
+
+            const satisfactionForm = document.getElementById('satisfactionForm');
+            if (satisfactionForm) {
+                satisfactionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleSatisfactionSubmit();
+                });
+            }
+
+            const referenceJira = document.getElementById('referenceJira');
+            if (referenceJira) {
+                referenceJira.addEventListener('blur', function() {
+                    if (this.value.trim()) {
+                        validateJiraReference(this);
+                    }
+                });
+            }
+        }
+
+        function validateRequiredField(input) {
+            if (!input.value.trim()) {
+                showError(input, 'Ce champ est obligatoire');
+            } else {
+                clearError(input);
+                input.style.borderColor = '#28a745';
+            }
+        }
+
+        function validateEmail(input) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (input.value.trim() && !emailRegex.test(input.value)) {
+                showError(input, 'Format email invalide');
+            } else if (input.value.trim()) {
+                clearError(input);
+                input.style.borderColor = '#28a745';
+            }
+        }
+
+        function validateJiraReference(input) {
+            const jiraRegex = /^(TIC|SMC|SNC)-\d+$/i;
+            if (input.value.trim() && !jiraRegex.test(input.value)) {
+                showError(input, 'Format JIRA invalide (ex: TIC-123)');
+            } else if (input.value.trim()) {
+                clearError(input);
+                input.style.borderColor = '#28a745';
+            }
+        }
+
+        function validateDateFormation() {
+            const input = document.getElementById('dateFormation');
+            const selectedDate = new Date(input.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const minDate = new Date();
+            minDate.setDate(today.getDate() - 7);
+            
+            if (selectedDate < minDate) {
+                const minDateStr = minDate.toLocaleDateString('fr-FR');
+                showError(input, 'La formation est trop ancienne. Date minimum acceptée : ' + minDateStr);
+            } else {
+                clearError(input);
+                input.style.borderColor = '#28a745';
+            }
+        }
+
+        function validateHeures() {
+            const heureDebut = document.getElementById('heureDebut');
+            const heureFin = document.getElementById('heureFin');
+            
+            if (heureDebut.value && heureFin.value) {
+                const debut = heureDebut.value.split(':');
+                const fin = heureFin.value.split(':');
+                const minutesDebut = parseInt(debut[0]) * 60 + parseInt(debut[1]);
+                const minutesFin = parseInt(fin[0]) * 60 + parseInt(fin[1]);
+                
+                if (minutesFin <= minutesDebut) {
+                    showError(heureFin, 'L\'heure de fin doit être après l\'heure de début');
+                } else {
+                    clearError(heureFin);
+                    heureFin.style.borderColor = '#28a745';
+                }
+            }
+        }
+
+        function showError(input, message) {
+            input.style.borderColor = '#dc3545';
+            
+            const existingError = input.parentElement.querySelector('.error-message');
+            if (existingError) existingError.remove();
+            
+            const errorDiv = document.createElement('small');
+            errorDiv.className = 'error-message';
+            errorDiv.style.color = '#dc3545';
+            errorDiv.style.display = 'block';
+            errorDiv.style.marginTop = '5px';
+            errorDiv.textContent = message;
+            input.parentElement.appendChild(errorDiv);
+        }
+
+        function clearError(input) {
+            const existingError = input.parentElement.querySelector('.error-message');
+            if (existingError) existingError.remove();
+            input.style.borderColor = '#e0e0e0';
+        }
+
+        function initTypeFormationToggle() {
+            const toggle = document.getElementById('typeFormationToggle');
+            const labelPresentiel = document.getElementById('labelPresentiel');
+            const labelVisio = document.getElementById('labelVisio');
+            
+            if (toggle) {
+                toggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        labelPresentiel.classList.remove('active');
+                        labelVisio.classList.add('active');
+                    } else {
+                        labelPresentiel.classList.add('active');
+                        labelVisio.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // ========================================
+        // ONGLET FORMATIONS
+        // ========================================
+        async function loadFormationsTab() {
+            const loadingDiv = document.getElementById('formationsLoading');
+            const listDiv = document.getElementById('formationsList');
+            const emptyDiv = document.getElementById('formationsEmpty');
+            
+            loadingDiv.style.display = 'block';
+            listDiv.style.display = 'none';
+            emptyDiv.style.display = 'none';
+            
+            // Charger les formations locales
+            let formations = [...formationsData];
+            
+            // Filtrer les formations :
+            // 1. Moins de 3 mois
+            // 2. Au moins un stagiaire n'a pas renseigné l'enquête
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+            
+            formations = formations.filter(formation => {
+                // Vérifier si la formation a moins de 3 mois
+                const formationDate = new Date(formation.date);
+                if (formationDate < threeMonthsAgo) return false;
+                
+                // Vérifier si au moins un stagiaire n'a pas répondu
+                const hasUnansweredStagiaire = formation.stagiaires.some(s => 
+                    (s.presence === 'Present' || s.presence === 'Partielle') && !s.satisfaction
+                );
+                return hasUnansweredStagiaire;
+            });
+            
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                
+                if (formations.length === 0) {
+                    emptyDiv.style.display = 'block';
+                } else {
+                    displayFormationsCards(formations);
+                    listDiv.style.display = 'block';
+                }
+            }, 500);
+        }
+
+        function displayFormationsCards(formations) {
+            const container = document.getElementById('formationsList');
+            container.innerHTML = '';
+            
+            formations.forEach(formation => {
+                const card = createFormationCard(formation);
+                container.appendChild(card);
+            });
+        }
+
+        function createFormationCard(formation) {
+            const dateFormation = new Date(formation.date).toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Filtrer les stagiaires qui n'ont pas encore répondu (présents ou partiels sans satisfaction)
+            const stagiairesSansReponse = formation.stagiaires.filter(s => 
+                (s.presence === 'Present' || s.presence === 'Partielle') && !s.satisfaction
+            );
+            
+            const card = document.createElement('div');
+            card.className = 'formation-card';
+            
+            let stagiairesList = '';
+            stagiairesSansReponse.forEach((stagiaire, index) => {
+                stagiairesList += `
+                    <div class="stagiaire-item" style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${stagiaire.nom}</strong><br>
+                                <small style="color: #666;">${stagiaire.email}</small>
+                            </div>
+                            <button class="btn" onclick="openReminderModal('${formation.id}', ${index})" style="background: #ff9800;">
+                                📧 Relancer le stagiaire
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            card.innerHTML = `
+                <div class="formation-card-header" style="background: #3270AF; color: white; padding: 15px; border-radius: 8px 8px 0 0;">
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 14px; opacity: 0.85; font-weight: 500;">${formation.raisonSociale}</div>
+                        <div class="formation-card-title" style="font-size: 18px; font-weight: 600; margin-top: 4px;">${formation.theme}</div>
+                    </div>
+                    <div class="formation-card-date" style="font-size: 13px; opacity: 0.75; font-style: italic; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px; margin-top: 8px;">${dateFormation}</div>
+                </div>
+                <div class="formation-card-body" style="padding: 15px;">
+                    <div>
+                        <h4 style="color: #3270AF; margin-bottom: 12px;">Stagiaires en attente de réponse :</h4>
+                        ${stagiairesList}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function viewFormationDetails(formationId) {
+            const formation = formationsData.find(f => f.id === formationId);
+            if (!formation) return;
+            
+            let detailsHTML = '<h3 style="color: #3270AF; margin-bottom: 20px;">Détails de la formation</h3>';
+            detailsHTML += '<div class="info-display">';
+            detailsHTML += `<div class="info-row"><div class="info-label">Formation :</div><div>${formation.theme}</div></div>`;
+            detailsHTML += `<div class="info-row"><div class="info-label">Client :</div><div>${formation.raisonSociale}</div></div>`;
+            detailsHTML += `<div class="info-row"><div class="info-label">Formateur :</div><div>${formation.nomFormateur}</div></div>`;
+            detailsHTML += `<div class="info-row"><div class="info-label">Date :</div><div>${new Date(formation.date).toLocaleDateString('fr-FR')}</div></div>`;
+            detailsHTML += '</div>';
+            
+            detailsHTML += '<h4 style="color: #3270AF; margin: 20px 0 10px;">Liste des stagiaires</h4>';
+            formation.stagiaires.forEach((stagiaire, index) => {
+                const satisfactionStatus = stagiaire.satisfaction ? '✅ Complétée' : '⏳ En attente';
+                detailsHTML += `
+                    <div class="stagiaire-item" style="margin-bottom: 15px;">
+                        <div class="stagiaire-header">
+                            <span class="stagiaire-number">Stagiaire ${index + 1}</span>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div><strong>Nom:</strong> ${stagiaire.nom}</div>
+                            <div><strong>Email:</strong> ${stagiaire.email}</div>
+                            <div><strong>Présence:</strong> <span style="color: ${stagiaire.presence === 'Present' ? '#28a745' : '#dc3545'};">${stagiaire.presence || 'Non renseigné'}</span></div>
+                            <div><strong>Satisfaction:</strong> ${satisfactionStatus}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>📋 Détails de la formation</h3>
+                        <button class="btn-icon" onclick="this.closest('.modal').remove()" style="color: white;">✖</button>
+                    </div>
+                    <div class="modal-body">
+                        ${detailsHTML}
+                        <button class="btn" onclick="this.closest('.modal').remove()" style="margin-top: 20px;">Fermer</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function sendLinksForFormation(formationId) {
+            const formation = formationsData.find(f => f.id === formationId);
+            if (!formation) return;
+            
+            const presentsCount = formation.stagiaires.filter(s => 
+                s.presence === 'Present' || s.presence === 'Partiellement présent'
+            ).length;
+            
+            if (presentsCount === 0) {
+                alert('⚠️ Aucun stagiaire présent ou partiellement présent. Veuillez d\'abord compléter les présences dans l\'espace formateur.');
+                return;
+            }
+            
+            if (confirm(`Voulez-vous envoyer les liens d'évaluation aux ${presentsCount} stagiaire(s) présent(s) ?`)) {
+                formation.stagiaires.forEach((stagiaire, index) => {
+                    if (stagiaire.presence === 'Present' || stagiaire.presence === 'Partiellement présent') {
+                        sendEmailToStagiaire(stagiaire, formationId, index);
+                    }
+                });
+                alert('✅ Les liens ont été générés ! Vos emails par défaut vont s\'ouvrir.');
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            const activeTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+            const activeContent = document.getElementById(tabName);
+            
+            if (activeTab) activeTab.classList.add('active');
+            if (activeContent) activeContent.classList.add('active');
+            
+            if (tabName === 'export') {
+                displayFormationsList();
+            }
+            
+            if (tabName === 'settings') {
+                updateFormationCount();
+            }
+            
+            if (tabName === 'formations') {
+                loadFormationsTab();
+            }
+        }
+
+        function addStagiaire() {
+            if (stagiaireCount >= MAX_STAGIAIRES) {
+                alert('⚠️ Maximum de ' + MAX_STAGIAIRES + ' stagiaires atteint');
+                return;
+            }
+            
+            stagiaireCount++;
+            const container = document.getElementById('stagiairesList');
+            const item = document.createElement('div');
+            item.className = 'stagiaire-item';
+            item.id = 'stagiaire-' + stagiaireCount;
+            
+            item.innerHTML = `
+                <div class="stagiaire-header">
+                    <span class="stagiaire-number">Stagiaire ${stagiaireCount}</span>
+                    <button type="button" class="btn-remove" onclick="removeStagiaire(${stagiaireCount})">🗑️ Supprimer</button>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Nom complet *</label>
+                        <input type="text" id="nomStagiaire${stagiaireCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="emailStagiaire${stagiaireCount}" required>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(item);
+            
+            // Ajouter les event listeners pour la validation
+            const emailInput = document.getElementById('emailStagiaire' + stagiaireCount);
+            if (emailInput) {
+                emailInput.addEventListener('blur', function() {
+                    validateEmail(this);
+                });
+                emailInput.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        clearError(this);
+                    }
+                });
+            }
+        }
+
+        function removeStagiaire(id) {
+            const item = document.getElementById('stagiaire-' + id);
+            if (item) {
+                item.remove();
+                stagiaireCount--;
+                renumberStagiaires();
+            }
+        }
+
+        function renumberStagiaires() {
+            const items = document.querySelectorAll('.stagiaire-item');
+            stagiaireCount = 0;
+            items.forEach((item, index) => {
+                stagiaireCount++;
+                item.id = 'stagiaire-' + stagiaireCount;
+                const number = item.querySelector('.stagiaire-number');
+                if (number) number.textContent = 'Stagiaire ' + stagiaireCount;
+                
+                const removeBtn = item.querySelector('.btn-remove');
+                if (removeBtn) {
+                    removeBtn.onclick = function() { removeStagiaire(stagiaireCount); };
+                }
+                
+                const nomInput = item.querySelector('input[id^="nomStagiaire"]');
+                const emailInput = item.querySelector('input[id^="emailStagiaire"]');
+                if (nomInput) nomInput.id = 'nomStagiaire' + stagiaireCount;
+                if (emailInput) emailInput.id = 'emailStagiaire' + stagiaireCount;
+            });
+        }
+
+        async function handleFormateurSubmit() {
+            const raisonSociale = document.getElementById('raisonSociale').value.trim();
+            const theme = document.getElementById('themeFormation').value.trim();
+            const referenceJira = document.getElementById('referenceJira').value.trim();
+            const nomFormateur = document.getElementById('nomFormateur').value.trim();
+            const dateFormation = document.getElementById('dateFormation').value;
+            const typeToggle = document.getElementById('typeFormationToggle').checked;
+            const typeFormation = typeToggle ? 'Visio' : 'Présentiel';
+            const heureDebut = document.getElementById('heureDebut').value;
+            const heureFin = document.getElementById('heureFin').value;
+            
+            if (!raisonSociale || !theme || !nomFormateur || !dateFormation || !heureDebut || !heureFin) {
+                alert('⚠️ Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+            
+            if (referenceJira) {
+                const jiraRegex = /^(TIC|SMC|SNC)-\d+$/i;
+                if (!jiraRegex.test(referenceJira)) {
+                    alert('⚠️ Format de référence JIRA invalide. Utilisez le format TIC-123, SMC-456 ou SNC-789');
+                    return;
+                }
+            }
+            
+            const selectedDate = new Date(dateFormation);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const minDate = new Date();
+            minDate.setDate(today.getDate() - 7);
+            
+            if (selectedDate < minDate) {
+                alert('⚠️ La date de formation est trop ancienne (plus de 7 jours avant aujourd\'hui)');
+                return;
+            }
+            
+            const debut = heureDebut.split(':');
+            const fin = heureFin.split(':');
+            const minutesDebut = parseInt(debut[0]) * 60 + parseInt(debut[1]);
+            const minutesFin = parseInt(fin[0]) * 60 + parseInt(fin[1]);
+            
+            if (minutesFin <= minutesDebut) {
+                alert('⚠️ L\'heure de fin doit être après l\'heure de début');
+                return;
+            }
+            
+            const stagiaires = [];
+            let hasError = false;
+            
+            for (let i = 1; i <= stagiaireCount; i++) {
+                const nomInput = document.getElementById('nomStagiaire' + i);
+                const emailInput = document.getElementById('emailStagiaire' + i);
+                
+                if (nomInput && emailInput) {
+                    const nom = nomInput.value.trim();
+                    const email = emailInput.value.trim();
+                    
+                    // Vérifier que le nom est rempli
+                    if (!nom) {
+                        showError(nomInput, 'Ce champ est obligatoire');
+                        hasError = true;
+                    }
+                    
+                    // Vérifier que l'email est rempli
+                    if (!email) {
+                        showError(emailInput, 'Ce champ est obligatoire');
+                        hasError = true;
+                    } else {
+                        // Vérifier le format de l'email
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            showError(emailInput, 'Format email invalide');
+                            hasError = true;
+                        }
+                    }
+                    
+                    if (nom && email) {
+                        // Générer un ID unique pour chaque stagiaire
+                        const stagiaireId = 'STG-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                        stagiaires.push({
+                            id: stagiaireId,
+                            nom: nom,
+                            email: email,
+                            lien: null, // Sera généré après la création de la formation
+                            presence: null,
+                            commentaire: '',
+                            satisfaction: null
+                        });
+                    }
+                }
+            }
+            
+            if (hasError) {
+                alert('⚠️ Veuillez corriger les erreurs dans le formulaire');
+                return;
+            }
+            
+            if (stagiaires.length === 0) {
+                alert('⚠️ Veuillez ajouter au moins un stagiaire');
+                return;
+            }
+            
+            // Vérifier que le webhook SharePoint est configuré
+            if (!WEBHOOK_URL) {
+                alert('⚠️ Erreur : Le webhook SharePoint n\'est pas configuré.\nVeuillez configurer l\'URL du webhook dans l\'onglet Paramètres avant de créer une formation.');
+                return;
+            }
+            
+            currentFormationId = 'FRM-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            
+            currentFormationData = {
+                id: currentFormationId,
+                raisonSociale: raisonSociale,
+                theme: theme,
+                referenceJira: referenceJira,
+                nomFormateur: nomFormateur,
+                date: dateFormation,
+                type: typeFormation,
+                heureDebut: heureDebut,
+                heureFin: heureFin,
+                stagiaires: stagiaires
+            };
+            
+            // Générer les liens personnalisés pour chaque stagiaire
+            const baseUrl = window.location.origin + window.location.pathname;
+            currentFormationData.stagiaires.forEach(stagiaire => {
+                stagiaire.lien = `${baseUrl}?fid=${currentFormationId}&stid=${stagiaire.id}`;
+            });
+            
+            // Afficher un indicateur de chargement
+            const submitButton = document.querySelector('#formateurForm button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '⏳ Enregistrement en cours...';
+            
+            try {
+                // Envoyer vers SharePoint AVANT de continuer
+                const success = await sendFormationToSharePoint(currentFormationData);
+                
+                if (!success) {
+                    throw new Error('Échec de l\'enregistrement dans SharePoint');
+                }
+                
+                // Sauvegarder localement seulement si SharePoint a réussi
+                formationsData.push(currentFormationData);
+                saveFormations();
+                
+                // Afficher la feuille de présence
+                document.getElementById('preparationForm').style.display = 'none';
+                document.getElementById('postFormationSection').style.display = 'block';
+                
+                displayFormationInfo();
+                displayPresenceForm();
+                
+                window.scrollTo(0, 0);
+                
+            } catch (error) {
+                alert('❌ Erreur lors de l\'enregistrement de la formation.\n' + error.message + '\n\nVeuillez vérifier votre connexion et la configuration du webhook dans Paramètres.');
+                console.error('Erreur:', error);
+            } finally {
+                // Restaurer le bouton
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        }
+
+        function displayFormationInfo() {
+            const info = document.getElementById('formationInfo');
+            const formation = currentFormationData;
+            
+            info.innerHTML = `
+                <div class="info-row"><div class="info-label">Client :</div><div>${formation.raisonSociale}</div></div>
+                <div class="info-row"><div class="info-label">Formation :</div><div>${formation.theme}</div></div>
+                ${formation.referenceJira ? `<div class="info-row"><div class="info-label">Référence JIRA :</div><div>${formation.referenceJira}</div></div>` : ''}
+                <div class="info-row"><div class="info-label">Formateur :</div><div>${formation.nomFormateur}</div></div>
+                <div class="info-row"><div class="info-label">Date :</div><div>${new Date(formation.date).toLocaleDateString('fr-FR')}</div></div>
+                <div class="info-row"><div class="info-label">Type :</div><div>${formation.type}</div></div>
+                <div class="info-row"><div class="info-label">Horaires :</div><div>${formation.heureDebut} - ${formation.heureFin}</div></div>
+                <div class="info-row"><div class="info-label">Nombre de stagiaires :</div><div>${formation.stagiaires.length}</div></div>
+            `;
+        }
+
+        function displayPresenceForm() {
+            const container = document.getElementById('presenceList');
+            container.innerHTML = '';
+            
+            currentFormationData.stagiaires.forEach((stagiaire, index) => {
+                const div = document.createElement('div');
+                div.className = 'stagiaire-item';
+                div.innerHTML = `
+                    <div class="stagiaire-header">
+                        <span class="stagiaire-number">${stagiaire.nom}</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Présence *</label>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="presence${index}" value="Present" required>
+                                <span>✅ Present</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="presence${index}" value="Absent" required>
+                                <span>❌ Absent</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="presence${index}" value="Partielle" required>
+                                <span>⚠️ Partielle</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Commentaire du formateur</label>
+                        <textarea id="commentaire${index}" rows="2" placeholder="Observations particulières sur ce stagiaire..."></textarea>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function handlePresenceSubmit() {
+            currentFormationData.stagiaires.forEach((stagiaire, index) => {
+                const presenceInputs = document.getElementsByName('presence' + index);
+                const commentaireInput = document.getElementById('commentaire' + index);
+                
+                let presenceValue = null;
+                presenceInputs.forEach(input => {
+                    if (input.checked) presenceValue = input.value;
+                });
+                
+                stagiaire.presence = presenceValue;
+                stagiaire.commentaire = commentaireInput ? commentaireInput.value.trim() : '';
+            });
+            
+            saveFormations();
+            
+            // Masquer la section présence
+            document.getElementById('postFormationSection').style.display = 'none';
+            
+            // Générer et afficher la page d'envoi des emails
+            generateEmailLinks();
+            
+            window.scrollTo(0, 0);
+        }
+
+        function generateEmailLinks() {
+            const container = document.getElementById('emailLinks');
+            const formation = currentFormationData;
+            
+            // V2.5.0 : Envoyer les données de présence et commentaires à SharePoint
+            sendPresenceDataToSharePoint(formation);
+            
+            const dateFormation = new Date(formation.date).toLocaleDateString('fr-FR', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            emailSubjectGlobal = `Votre formation ${formation.theme} - attestation et enquête de satisfaction`;
+            emailBodyGlobal = 
+                `Bonjour,\n\n` +
+                `Vous avez participé à la formation « ${formation.theme} » animée par ${formation.nomFormateur} le ${dateFormation}.\n\n` +
+                `Afin de finaliser votre dossier, nous vous invitons à cliquer sur le lien ci-dessous. Vous y trouverez :\n` +
+                `– votre attestation de présence,\n` +
+                `– ainsi qu'une brève enquête de satisfaction (moins d'une minute à remplir).\n\n` +
+                `👉 [LIEN]\n\n` +
+                `Nous vous remercions pour votre participation et restons à votre disposition pour toute question complémentaire.\n\n` +
+                `Bien cordialement,`;
+            
+            container.innerHTML = `
+                <h2 style="margin-bottom: 20px; color: #3270AF;">📧 Envoi des liens aux stagiaires</h2>
+                
+                <div class="alert alert-success" style="margin-bottom: 30px;">
+                    ✅ Les présences ont été enregistrées avec succès ! Vous pouvez maintenant envoyer les emails aux stagiaires.
+                </div>
+                
+                <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #3270AF; margin-bottom: 20px;">
+                    <strong style="color: #3270AF;">📧 Modèle d'email</strong>
+                    <button class="btn-edit" style="margin-left: 10px;" onclick="openEmailModal()">
+                        ✏️ Personnaliser l'email
+                    </button>
+                    <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; font-family: 'Segoe UI', sans-serif;">
+                        <div style="margin-bottom: 10px;"><strong>Objet :</strong> ${emailSubjectGlobal}</div>
+                        <div style="white-space: pre-wrap; color: #666; font-size: 14px;">${emailBodyGlobal.replace('[LIEN]', '🔗 Lien personnalisé du stagiaire')}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #3270AF;">
+                    <strong style="color: #3270AF;">📧 Envoi individuel par stagiaire</strong><br>
+                    <small style="color: #666;">Chaque stagiaire recevra un email avec uniquement son lien personnel</small>
+                    <div style="margin-top: 15px;" id="individualEmailsList"></div>
+                </div>
+            `;
+
+            // Créer la liste des boutons individuels
+            const individualList = document.getElementById('individualEmailsList');
+            formation.stagiaires.forEach((stagiaire, index) => {
+                // Utiliser le lien stocké dans les données du stagiaire
+                const link = stagiaire.lien;
+                
+                const div = document.createElement('div');
+                div.style.cssText = 'background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;';
+                
+                div.innerHTML = `
+                    <div>
+                        <strong style="color: #333;">${stagiaire.nom}</strong><br>
+                        <small style="color: #666;">${stagiaire.email}</small><br>
+                        <small style="color: #999;">Présence : <strong style="color: ${stagiaire.presence === 'Present' ? '#28a745' : '#666'};">${stagiaire.presence}</strong></small>
+                    </div>
+                    <button class="btn" style="margin: 0; padding: 10px 20px; font-size: 14px;" onclick="sendIndividualEmail('${stagiaire.id}')">
+                        📧 Envoyer l'email
+                    </button>
+                `;
+                
+                individualList.appendChild(div);
+            });
+
+            document.getElementById('linksGenerated').style.display = 'block';
+        }
+
+        function openEmailModal() {
+            document.getElementById('emailSubjectEdit').value = emailSubjectGlobal;
+            document.getElementById('emailBodyEdit').value = emailBodyGlobal;
+            document.getElementById('emailModal').style.display = 'block';
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').style.display = 'none';
+        }
+
+        function saveEmailChanges() {
+            emailSubjectGlobal = document.getElementById('emailSubjectEdit').value;
+            emailBodyGlobal = document.getElementById('emailBodyEdit').value;
+            closeEmailModal();
+            generateEmailLinks();
+        }
+
+        function sendIndividualEmail(stagiaireId) {
+            const formation = currentFormationData;
+            const stagiaire = formation.stagiaires.find(s => s.id === stagiaireId);
+            
+            if (!stagiaire) {
+                alert('❌ Erreur : Stagiaire non trouvé');
+                return;
+            }
+            
+            // Utiliser le lien stocké dans les données du stagiaire
+            const link = stagiaire.lien;
+            
+            const subject = encodeURIComponent(emailSubjectGlobal);
+            const body = encodeURIComponent(emailBodyGlobal.replace('[LIEN]', link));
+            
+            window.location.href = `mailto:${stagiaire.email}?subject=${subject}&body=${body}`;
+        }
+
+        // ========================================
+        // RELANCE STAGIAIRES
+        // ========================================
+        let currentReminderFormationId = null;
+        let currentReminderStagiaireId = null;
+
+        function openReminderModal(formationId, stagiaireIndex) {
+            const formation = formationsData.find(f => f.id === formationId);
+            if (!formation) return;
+            
+            const stagiairesSansReponse = formation.stagiaires.filter(s => 
+                (s.presence === 'Present' || s.presence === 'Partielle') && !s.satisfaction
+            );
+            const stagiaire = stagiairesSansReponse[stagiaireIndex];
+            
+            if (!stagiaire) return;
+            
+            currentReminderFormationId = formationId;
+            currentReminderStagiaireId = stagiaire.id;
+            
+            // Informations de la formation
+            const dateFormation = new Date(formation.date).toLocaleDateString('fr-FR', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            document.getElementById('reminderInfo').innerHTML = `
+                <div class="info-row"><div class="info-label">Formation :</div><div>${formation.theme}</div></div>
+                <div class="info-row"><div class="info-label">Date :</div><div>${dateFormation}</div></div>
+                <div class="info-row"><div class="info-label">Stagiaire :</div><div>${stagiaire.nom}</div></div>
+                <div class="info-row"><div class="info-label">Email :</div><div>${stagiaire.email}</div></div>
+            `;
+            
+            // Texte de relance par défaut
+            const subject = `Relance - Enquête de satisfaction formation ${formation.theme}`;
+            const body = 
+                `Bonjour,\n\n` +
+                `La mesure de votre satisfaction est un élément important pour nous permettre d'évaluer la formation ${formation.theme} que vous avez suivie le ${dateFormation}.\n\n` +
+                `Ainsi, nous vous remercions de bien vouloir répondre à un rapide questionnaire en cliquant sur le lien : [LIEN]\n\n` +
+                `Vous souhaitant une très bonne journée,\n` +
+                `Très Cordialement`;
+            
+            document.getElementById('reminderSubjectEdit').value = subject;
+            document.getElementById('reminderBodyEdit').value = body;
+            
+            document.getElementById('reminderModal').style.display = 'block';
+        }
+
+        function closeReminderModal() {
+            document.getElementById('reminderModal').style.display = 'none';
+            currentReminderFormationId = null;
+            currentReminderStagiaireId = null;
+        }
+
+        function sendReminder() {
+            if (!currentReminderFormationId || !currentReminderStagiaireId) return;
+            
+            const formation = formationsData.find(f => f.id === currentReminderFormationId);
+            if (!formation) return;
+            
+            const stagiaire = formation.stagiaires.find(s => s.id === currentReminderStagiaireId);
+            if (!stagiaire) return;
+            
+            // Utiliser le lien stocké dans les données du stagiaire
+            const link = stagiaire.lien;
+            
+            const subject = document.getElementById('reminderSubjectEdit').value;
+            const body = document.getElementById('reminderBodyEdit').value.replace('[LIEN]', link);
+            
+            const mailtoLink = `mailto:${stagiaire.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            window.location.href = mailtoLink;
+            
+            closeReminderModal();
+        }
+
+        // ========================================
+        // ONGLET STAGIAIRE
+        // ========================================
+        function checkURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const formationId = urlParams.get('fid');
+            const stagiaireId = urlParams.get('stid'); // Utiliser l'ID au lieu de l'index
+            
+            if (formationId && stagiaireId) {
+                // Mode stagiaire : masquer tous les onglets sauf "Espace Stagiaire"
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => {
+                    if (tab.getAttribute('data-tab') !== 'stagiaire') {
+                        tab.style.display = 'none';
+                    }
+                });
+                
+                switchTab('stagiaire');
+                loadStagiaireView(formationId, stagiaireId);
+            }
+        }
+
+        async function loadStagiaireView(formationId, stagiaireId) {
+            let formation = formationsData.find(f => f.id === formationId);
+            
+            // Si pas trouvée en local et webhook configuré, essayer de récupérer depuis SharePoint
+            if (!formation && WEBHOOK_GET_URL) {
+                try {
+                    formation = await getFormationFromSharePoint(formationId);
+                } catch (error) {
+                    console.error('Erreur lors de la récupération depuis SharePoint:', error);
+                }
+            }
+            
+            if (!formation) {
+                document.getElementById('infoFormation').innerHTML = `
+                    <div class="alert" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+                        ❌ Formation non trouvée ou lien invalide.
+                    </div>
+                `;
+                return;
+            }
+            
+            // Trouver le stagiaire par son ID
+            const stagiaire = formation.stagiaires.find(s => s.id === stagiaireId);
+            
+            if (!stagiaire) {
+                document.getElementById('infoFormation').innerHTML = `
+                    <div class="alert" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+                        ❌ Stagiaire non trouvé ou lien invalide.
+                    </div>
+                `;
+                return;
+            }
+            
+            if (stagiaire.satisfaction) {
+                displayThankYouMessage();
+                return;
+            }
+            
+            const dateFormation = new Date(formation.date).toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('infoFormation').innerHTML = `
+                <h3 style="color: #3270AF; margin-bottom: 15px;">✅ Attestation de présence</h3>
+                <div class="info-row"><div class="info-label">Formation :</div><div>${formation.theme}</div></div>
+                <div class="info-row"><div class="info-label">Date :</div><div>${dateFormation}</div></div>
+                <div class="info-row"><div class="info-label">Horaires :</div><div>${formation.heureDebut} - ${formation.heureFin}</div></div>
+                <div class="info-row"><div class="info-label">Formateur :</div><div>${formation.nomFormateur}</div></div>
+                <div class="info-row"><div class="info-label">Client :</div><div>${formation.raisonSociale}</div></div>
+                <div class="info-row"><div class="info-label">Stagiaire :</div><div>${stagiaire.nom}</div></div>
+                <div class="info-row"><div class="info-label">Statut :</div><div><strong style="color: ${stagiaire.presence === 'Present' ? '#28a745' : '#dc3545'};">${stagiaire.presence || 'Non renseigné'}</strong></div></div>
+            `;
+            
+            if (stagiaire.presence !== 'Absent') {
+                document.getElementById('satisfactionForm').style.display = 'block';
+                
+                document.getElementById('satisfactionForm').onsubmit = function(e) {
+                    e.preventDefault();
+                    handleSatisfactionSubmit(formationId, stagiaireId);
+                };
+            } else {
+                document.getElementById('infoFormation').innerHTML += `
+                    <div class="alert alert-warning" style="margin-top: 20px;">
+                        ℹ️ Vous avez été marqué(e) comme "Absent". L'enquête de satisfaction n'est disponible que pour les stagiaires présents ou partiellement présents.
+                    </div>
+                `;
+            }
+        }
+
+        function initStarRatings() {
+            ['q1', 'q2', 'q3'].forEach(qId => {
+                const container = document.getElementById(qId + 'Stars');
+                if (!container) return;
+                
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.className = 'star';
+                    star.innerHTML = '★';
+                    star.dataset.value = i;
+                    star.dataset.question = qId;
+                    star.addEventListener('click', function() {
+                        document.getElementById(this.dataset.question).value = this.dataset.value;
+                        updateStars(this.dataset.question, this.dataset.value);
+                    });
+                    container.appendChild(star);
+                }
+            });
+        }
+
+        function updateStars(qId, value) {
+            const stars = document.querySelectorAll('#' + qId + 'Stars .star');
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function initCharCounters() {
+            ['q6', 'q7'].forEach(id => {
+                const textarea = document.getElementById(id);
+                const counter = document.getElementById(id + 'Count');
+                
+                if (textarea && counter) {
+                    textarea.addEventListener('input', function() {
+                        const remaining = 100 - this.value.length;
+                        counter.textContent = remaining;
+                        
+                        if (remaining < 20) {
+                            counter.style.color = '#dc3545';
+                        } else {
+                            counter.style.color = '#666';
+                        }
+                    });
+                }
+            });
+        }
+
+        function handleSatisfactionSubmit(formationId, stagiaireId) {
+            const q4Radio = document.querySelector('input[name="q4"]:checked');
+            const q5Radio = document.querySelector('input[name="q5"]:checked');
+            
+            if (!q4Radio || !q5Radio) {
+                alert('⚠️ Veuillez répondre à toutes les questions obligatoires (*)');
+                return;
+            }
+            
+            const q1Score = parseInt(document.getElementById('q1').value);
+            const q2Score = parseInt(document.getElementById('q2').value);
+            const q3Score = parseInt(document.getElementById('q3').value);
+            
+            let q4Score = 0;
+            switch(q4Radio.value) {
+                case 'Pas du tout': q4Score = 0; break;
+                case 'Un peu': q4Score = 1; break;
+                case 'Moyennement': q4Score = 2; break;
+                case 'Assez': q4Score = 3; break;
+                case 'Tout à fait': q4Score = 5; break;
+            }
+            
+            let q5Score = 0;
+            switch(q5Radio.value) {
+                case 'Trop courte': q5Score = 0; break;
+                case 'Adaptée': q5Score = 5; break;
+                case 'Trop longue': q5Score = 3; break;
+            }
+            
+            const totalScore = q1Score + q2Score + q3Score + q4Score + q5Score;
+            const noteGlobale = (totalScore / 5).toFixed(2);
+            
+            const formation = formationsData.find(f => f.id === formationId);
+            const stagiaire = formation.stagiaires.find(s => s.id === stagiaireId);
+            
+            if (!stagiaire) {
+                alert('❌ Erreur : Stagiaire non trouvé');
+                return;
+            }
+            
+            stagiaire.satisfaction = {
+                q1: q1Score,
+                q2: q2Score,
+                q3: q3Score,
+                q4: q4Radio.value,
+                q5: q5Radio.value,
+                q6: document.getElementById('q6').value,
+                q7: document.getElementById('q7').value,
+                noteGlobale: noteGlobale,
+                dateEnvoi: new Date().toISOString()
+            };
+            
+            saveFormations();
+            
+            // V2.5.0 : Envoi vers SharePoint si activé - Envoie les données de satisfaction du stagiaire
+            if (ENABLE_SHAREPOINT_SYNC && WEBHOOK_URL) {
+                sendSatisfactionToSharePoint(formation, stagiaire);
+            }
+            
+            let message = '';
+            if (noteGlobale < 3) {
+                message = 'Nous sommes désolés de cette appréciation, nous allons revenir vers vous pour comprendre cette évaluation.';
+            } else if (noteGlobale >= 3 && noteGlobale <= 4.5) {
+                message = 'Merci pour cette appréciation, votre retour va nous permettre de nous améliorer.';
+            } else {
+                message = 'Merci ! Cette bonne note nous encourage à continuer à travailler pour votre satisfaction.';
+            }
+            
+            displayThankYouMessage(noteGlobale, message);
+        }
+
+        function sendToMake(formation, stagiaire, stagiaireIndex) {
+            // Créer des dates complètes pour les heures (format ISO 8601)
+            const dateFormation = formation.date; // Format: YYYY-MM-DD
+            const heureDebutISO = `${dateFormation}T${formation.heureDebut}:00`;
+            const heureFinISO = `${dateFormation}T${formation.heureFin}:00`;
+            
+            const payload = {
+                formationId: formation.id,
+                date: new Date(formation.date).toLocaleDateString('fr-FR'),
+                client: formation.raisonSociale,
+                formation: formation.theme,
+                referenceJira: formation.referenceJira || '',
+                formateur: formation.nomFormateur,
+                type: formation.type,
+                heureDebut: heureDebutISO,
+                heureFin: heureFinISO,
+                stagiaireNom: stagiaire.nom,
+                stagiaireEmail: stagiaire.email,
+                presence: stagiaire.presence,
+                commentaireFormateur: stagiaire.commentaire,
+                q1: stagiaire.satisfaction.q1,
+                q2: stagiaire.satisfaction.q2,
+                q3: stagiaire.satisfaction.q3,
+                q4: stagiaire.satisfaction.q4,
+                q5: stagiaire.satisfaction.q5,
+                suggestions: stagiaire.satisfaction.q6,
+                commentaire: stagiaire.satisfaction.q7,
+                noteGlobale: stagiaire.satisfaction.noteGlobale,
+                dateReponse: new Date(stagiaire.satisfaction.dateEnvoi).toLocaleDateString('fr-FR')
+            };
+            
+            console.log('📤 Envoi des données vers Make:', payload);
+            console.log('🔑 Authentification avec clé:', API_KEY);
+            
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-make-apikey': API_KEY
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                console.log('📥 Réponse de Make:', response.status, response.statusText);
+                if (response.ok) {
+                    console.log('✅ Données envoyées à Make avec succès');
+                } else {
+                    console.error('❌ Erreur lors de l\'envoi vers Make:', response.status, response.statusText);
+                }
+                return response.text();
+            })
+            .then(text => {
+                if (text) console.log('Réponse Make:', text);
+            })
+            .catch(error => {
+                console.error('❌ Erreur lors de l\'envoi vers Make:', error);
+            });
+        }
+
+        function displayThankYouMessage(noteGlobale, message) {
+            document.getElementById('infoFormation').style.display = 'none';
+            document.getElementById('satisfactionForm').style.display = 'none';
+            
+            const thankYou = document.getElementById('thankYouMessage');
+            thankYou.innerHTML = `
+                <div class="alert alert-success">
+                    <h3 style="margin-bottom: 15px;">✅ Merci pour votre participation !</h3>
+                    <p style="font-size: 18px; margin: 15px 0;"><strong>Votre avis compte beaucoup pour nous.</strong></p>
+                    <p style="font-size: 20px; margin: 15px 0; color: #3270AF;"><strong>Votre appréciation globale est de ${noteGlobale} sur 5.</strong></p>
+                    <p style="margin-top: 15px;">${message}</p>
+                </div>
+            `;
+            thankYou.style.display = 'block';
+        }
+
+        // ========================================
+        // GESTION DES DONNÉES
+        // ========================================
+        function saveFormations() {
+            localStorage.setItem('wenegoce_formations', JSON.stringify(formationsData));
+        }
+
+        function loadFormations() {
+            const saved = localStorage.getItem('wenegoce_formations');
+            if (saved) {
+                try {
+                    formationsData = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Erreur lors du chargement des données:', e);
+                    formationsData = [];
+                }
+            }
+        }
+
+        // ========================================
+        // EXPORT EXCEL
+        // ========================================
+        function generateExcel(autoExport = false) {
+            if (formationsData.length === 0) {
+                if (!autoExport) {
+                    alert('❌ Aucune donnée à exporter');
+                }
+                return;
+            }
+
+            const data = [];
+            
+            formationsData.forEach(formation => {
+                const row = {
+                    'Date': new Date(formation.date).toLocaleDateString('fr-FR'),
+                    'Client': formation.raisonSociale,
+                    'Formation': formation.theme,
+                    'Référence JIRA': formation.referenceJira || '',
+                    'Formateur': formation.nomFormateur,
+                    'Type': formation.type,
+                    'Heure début': formation.heureDebut,
+                    'Heure fin': formation.heureFin
+                };
+
+                // Ajouter les colonnes pour chaque stagiaire (max 10)
+                for (let i = 0; i < MAX_STAGIAIRES; i++) {
+                    const stagiaire = formation.stagiaires[i];
+                    const prefix = 'Stagiaire ' + (i + 1) + ' - ';
+                    
+                    if (stagiaire) {
+                        row[prefix + 'Nom'] = stagiaire.nom;
+                        row[prefix + 'Email'] = stagiaire.email;
+                        row[prefix + 'Présence'] = stagiaire.presence || 'Non renseigné';
+                        row[prefix + 'Commentaire formateur'] = stagiaire.commentaire || '';
+                        
+                        if (stagiaire.satisfaction) {
+                            row[prefix + 'Q1 (attentes 1-5)'] = stagiaire.satisfaction.q1;
+                            row[prefix + 'Q2 (objectifs 1-5)'] = stagiaire.satisfaction.q2;
+                            row[prefix + 'Q3 (formateur 1-5)'] = stagiaire.satisfaction.q3;
+                            row[prefix + 'Q4 (aisance)'] = stagiaire.satisfaction.q4;
+                            row[prefix + 'Q5 (durée)'] = stagiaire.satisfaction.q5;
+                            row[prefix + 'Suggestions'] = stagiaire.satisfaction.q6;
+                            row[prefix + 'Commentaire'] = stagiaire.satisfaction.q7;
+                            row[prefix + 'Note globale /5'] = stagiaire.satisfaction.noteGlobale;
+                            const dateEnvoi = new Date(stagiaire.satisfaction.dateEnvoi);
+                            row[prefix + 'Date réponse'] = dateEnvoi.toLocaleDateString('fr-FR');
+                        } else {
+                            row[prefix + 'Q1 (attentes 1-5)'] = '';
+                            row[prefix + 'Q2 (objectifs 1-5)'] = '';
+                            row[prefix + 'Q3 (formateur 1-5)'] = '';
+                            row[prefix + 'Q4 (aisance)'] = '';
+                            row[prefix + 'Q5 (durée)'] = '';
+                            row[prefix + 'Suggestions'] = '';
+                            row[prefix + 'Commentaire'] = '';
+                            row[prefix + 'Note globale /5'] = '';
+                            row[prefix + 'Date réponse'] = '';
+                        }
+                    } else {
+                        // Colonnes vides si pas de stagiaire
+                        row[prefix + 'Nom'] = '';
+                        row[prefix + 'Email'] = '';
+                        row[prefix + 'Présence'] = '';
+                        row[prefix + 'Commentaire formateur'] = '';
+                        row[prefix + 'Q1 (attentes 1-5)'] = '';
+                        row[prefix + 'Q2 (objectifs 1-5)'] = '';
+                        row[prefix + 'Q3 (formateur 1-5)'] = '';
+                        row[prefix + 'Q4 (aisance)'] = '';
+                        row[prefix + 'Q5 (durée)'] = '';
+                        row[prefix + 'Suggestions'] = '';
+                        row[prefix + 'Commentaire'] = '';
+                        row[prefix + 'Note globale /5'] = '';
+                        row[prefix + 'Date réponse'] = '';
+                    }
+                }
+
+                data.push(row);
+            });
+
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Formations');
+            
+            const fileName = 'wenegoce-formations-' + new Date().toISOString().split('T')[0] + '.xlsx';
+            XLSX.writeFile(wb, fileName);
+            
+            // Message uniquement si export manuel
+            if (!autoExport) {
+                console.log('Export Excel généré : ' + fileName);
+            }
+        }
+
+        // ========================================
+        // GESTION DES PARAMÈTRES MAKE
+        // ========================================
+        function initializeSettings() {
+            document.getElementById('enableSharePointSync').checked = ENABLE_SHAREPOINT_SYNC;
+            document.getElementById('webhookInput').value = WEBHOOK_URL;
+            document.getElementById('webhookGetInput').value = WEBHOOK_GET_URL;
+            document.getElementById('apiKeyInput').value = API_KEY;
+            updateWebhookDisplay();
+            updateWebhookGetDisplay();
+            updateAPIKeyDisplay();
+            updateFormationCount();
+        }
+
+        function updateWebhookDisplay() {
+            const display = document.getElementById('webhookDisplay');
+            if (WEBHOOK_URL && WEBHOOK_URL !== '') {
+                display.textContent = WEBHOOK_URL.substring(0, 100) + '...';
+            } else {
+                display.textContent = 'Non configurée';
+            }
+        }
+
+        function updateWebhookGetDisplay() {
+            const display = document.getElementById('webhookGetDisplay');
+            if (WEBHOOK_GET_URL && WEBHOOK_GET_URL !== '') {
+                display.textContent = WEBHOOK_GET_URL.substring(0, 100) + '...';
+            } else {
+                display.textContent = 'Non configurée';
+            }
+        }
+
+        function updateAPIKeyDisplay() {
+            const display = document.getElementById('apiKeyDisplay');
+            if (API_KEY && API_KEY !== '') {
+                display.textContent = API_KEY;
+            } else {
+                display.textContent = 'Non configurée';
+            }
+        }
+
+        function showSettingsMessage(message, type = 'success') {
+            const settingsContent = document.getElementById('settings');
+            const existingMsg = settingsContent.querySelector('.settings-message');
+            if (existingMsg) existingMsg.remove();
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'settings-message alert';
+            if (type === 'success') {
+                msgDiv.style.background = '#d4edda';
+                msgDiv.style.color = '#155724';
+                msgDiv.style.border = '1px solid #c3e6cb';
+            } else if (type === 'error') {
+                msgDiv.style.background = '#f8d7da';
+                msgDiv.style.color = '#721c24';
+                msgDiv.style.border = '1px solid #f5c6cb';
+            }
+            msgDiv.innerHTML = message;
+            
+            const firstChild = settingsContent.querySelector('h2').nextElementSibling;
+            settingsContent.insertBefore(msgDiv, firstChild);
+            
+            setTimeout(() => msgDiv.remove(), 3000);
+        }
+
+        function updateWebhookURL() {
+            const newUrl = document.getElementById('webhookInput').value.trim();
+            if (!newUrl) {
+                showSettingsMessage('❌ L\'URL ne peut pas être vide', 'error');
+                return;
+            }
+            if (!newUrl.includes('https')) {
+                showSettingsMessage('❌ L\'URL doit commencer par https://', 'error');
+                return;
+            }
+            
+            WEBHOOK_URL = newUrl;
+            localStorage.setItem('wenegoce_webhook', WEBHOOK_URL);
+            updateWebhookDisplay();
+            showSettingsMessage('✅ URL du webhook enregistrement enregistrée', 'success');
+        }
+
+        function updateWebhookGetURL() {
+            const newUrl = document.getElementById('webhookGetInput').value.trim();
+            if (!newUrl) {
+                showSettingsMessage('❌ L\'URL ne peut pas être vide', 'error');
+                return;
+            }
+            if (!newUrl.includes('https')) {
+                showSettingsMessage('❌ L\'URL doit commencer par https://', 'error');
+                return;
+            }
+            
+            WEBHOOK_GET_URL = newUrl;
+            localStorage.setItem('wenegoce_webhook_get', WEBHOOK_GET_URL);
+            updateWebhookGetDisplay();
+            showSettingsMessage('✅ URL du webhook récupération enregistrée', 'success');
+        }
+
+        function updateAPIKey() {
+            const newKey = document.getElementById('apiKeyInput').value.trim();
+            if (!newKey) {
+                showSettingsMessage('❌ La clé API ne peut pas être vide', 'error');
+                return;
+            }
+            
+            API_KEY = newKey;
+            localStorage.setItem('wenegoce_apikey', API_KEY);
+            updateAPIKeyDisplay();
+            showSettingsMessage('✅ Clé API enregistrée', 'success');
+        }
+
+        function copyWebhookURL() {
+            if (!WEBHOOK_URL) {
+                showSettingsMessage('❌ Aucune URL configurée', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(WEBHOOK_URL);
+            showSettingsMessage('✅ URL copiée dans le presse-papiers', 'success');
+        }
+
+        function copyWebhookGetURL() {
+            if (!WEBHOOK_GET_URL) {
+                showSettingsMessage('❌ Aucune URL configurée', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(WEBHOOK_GET_URL);
+            showSettingsMessage('✅ URL récupération copiée dans le presse-papiers', 'success');
+        }
+
+        function copyAPIKey() {
+            if (!API_KEY) {
+                showSettingsMessage('❌ Aucune clé API configurée', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(API_KEY);
+            showSettingsMessage('✅ Clé API copiée dans le presse-papiers', 'success');
+        }
+
+        function toggleSync() {
+            ENABLE_SHAREPOINT_SYNC = document.getElementById('enableSharePointSync').checked;
+            localStorage.setItem('wenegoce_sync_enabled', ENABLE_SHAREPOINT_SYNC);
+        }
+
+        function updateFormationCount() {
+            document.getElementById('formationCount').textContent = formationsData.length;
+        }
+
+        // ========================================
+        // FONCTIONS SHAREPOINT (V2.0)
+        // ========================================
+        
+        async function sendFormationToSharePoint(formation) {
+            try {
+                // Transformer les données au format attendu par SharePoint/Make
+                const sharePointData = {
+                    FormationID: formation.id,
+                    RaisonSociale: formation.raisonSociale,
+                    ThemeFormation: formation.theme,
+                    ReferenceJira: formation.referenceJira || '',
+                    NomFormateur: formation.nomFormateur,
+                    DateFormation: formation.date,
+                    TypeFormation: formation.type,
+                    HeureDebut: formation.heureDebut,
+                    HeureFin: formation.heureFin,
+                    Stagiaires: formation.stagiaires  // Envoyer comme array, pas comme string
+                };
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-make-apikey': API_KEY
+                    },
+                    body: JSON.stringify(sharePointData)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Formation envoyée à SharePoint avec succès');
+                    return true;
+                } else {
+                    console.error('❌ Erreur lors de l\'envoi vers SharePoint:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Erreur réseau lors de l\'envoi:', error);
+                return false;
+            }
+        }
+
+        function transformSharePointData(spData) {
+            // Transformer les données SharePoint ({{3.Fields}}) vers le format attendu par l'application
+            try {
+                // Parser les stagiaires si c'est une string JSON
+                let stagiaires = [];
+                if (spData.Stagiaires) {
+                    if (typeof spData.Stagiaires === 'string') {
+                        stagiaires = JSON.parse(spData.Stagiaires);
+                    } else {
+                        stagiaires = spData.Stagiaires;
+                    }
+                }
+                
+                // Formater la date si nécessaire
+                let dateFormation = spData.DateFormation || spData.date;
+                if (dateFormation && dateFormation.includes('T')) {
+                    dateFormation = dateFormation.split('T')[0]; // Garder seulement YYYY-MM-DD
+                }
+                
+                return {
+                    id: spData.FormationID || spData.id,
+                    raisonSociale: spData.RaisonSociale || spData.raisonSociale,
+                    theme: spData.ThemeFormation || spData.theme,
+                    referenceJira: spData.ReferenceJira || spData.referenceJira || '',
+                    nomFormateur: spData.NomFormateur || spData.nomFormateur,
+                    date: dateFormation,
+                    type: spData.TypeFormation || spData.type,
+                    heureDebut: spData.HeureDebut || spData.heureDebut,
+                    heureFin: spData.HeureFin || spData.heureFin,
+                    stagiaires: stagiaires
+                };
+            } catch (error) {
+                console.error('❌ Erreur lors de la transformation des données SharePoint:', error);
+                return null;
+            }
+        }
+
+        async function getFormationFromSharePoint(formationId) {
+            try {
+                const response = await fetch(WEBHOOK_GET_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        formationId: formationId
+                    })
+                });
+                
+                if (response.ok) {
+                    const rawData = await response.json();
+                    console.log('✅ Formation récupérée depuis SharePoint (brut):', rawData);
+                    
+                    // Transformer les données SharePoint vers le format attendu
+                    const transformedData = transformSharePointData(rawData);
+                    
+                    if (transformedData) {
+                        console.log('✅ Données transformées:', transformedData);
+                        return transformedData;
+                    } else {
+                        console.error('❌ Échec de la transformation des données');
+                        return null;
+                    }
+                } else {
+                    console.error('❌ Formation non trouvée dans SharePoint');
+                    return null;
+                }
+            } catch (error) {
+                console.error('❌ Erreur lors de la récupération depuis SharePoint:', error);
+                return null;
+            }
+        }
+
+        async function sendSatisfactionToSharePoint(formation, stagiaire) {
+            try {
+                // V2.5.0 : Envoyer les données de satisfaction avec toutes les infos de contexte
+                const satisfactionData = {
+                    FormationID: formation.id,
+                    RaisonSociale: formation.raisonSociale,
+                    ThemeFormation: formation.theme,
+                    DateFormation: formation.date,
+                    TypeFormation: formation.type,
+                    NomFormateur: formation.nomFormateur,
+                    StagiaireID: stagiaire.id,
+                    NomStagiaire: stagiaire.nom,
+                    EmailStagiaire: stagiaire.email,
+                    Q1_AdaptationContenu: stagiaire.satisfaction.q1,
+                    Q2_PedagogieFormateur: stagiaire.satisfaction.q2,
+                    Q3_Supports: stagiaire.satisfaction.q3,
+                    Q4_ObjectifsAtteints: stagiaire.satisfaction.q4,
+                    Q5_DureeFormation: stagiaire.satisfaction.q5,
+                    Q6_Suggestions: stagiaire.satisfaction.q6 || '',
+                    Q7_CommentairesStagiaire: stagiaire.satisfaction.q7 || '',
+                    NoteGlobale: parseFloat(stagiaire.satisfaction.noteGlobale),
+                    DateReponse: stagiaire.satisfaction.dateEnvoi
+                };
+
+                console.log('📤 Envoi des données de satisfaction à SharePoint:', satisfactionData);
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-make-apikey': API_KEY
+                    },
+                    body: JSON.stringify(satisfactionData)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Données de satisfaction envoyées à SharePoint avec succès');
+                } else {
+                    console.error('❌ Erreur lors de l\'envoi de la satisfaction:', response.status);
+                }
+            } catch (error) {
+                console.error('❌ Erreur réseau lors de l\'envoi de la satisfaction:', error);
+            }
+        }
+
+        // ========================================
+        // NOUVELLE FONCTION v2.5.0 : ENVOI DES DONNÉES DE PRÉSENCE ET COMMENTAIRES
+        // ========================================
+        async function sendPresenceDataToSharePoint(formation) {
+            // Vérifier si la synchronisation SharePoint est activée
+            if (!ENABLE_SHAREPOINT_SYNC || !WEBHOOK_URL) {
+                console.log('ℹ️ Synchronisation SharePoint désactivée ou webhook non configuré');
+                return false;
+            }
+
+            try {
+                // Préparer les données à envoyer : ID formation + données de chaque stagiaire
+                const presenceData = {
+                    FormationID: formation.id,
+                    Stagiaires: formation.stagiaires.map(stagiaire => ({
+                        StagiaireID: stagiaire.id,
+                        Nom: stagiaire.nom,
+                        Email: stagiaire.email,
+                        Presence: stagiaire.presence || 'Non renseigné',
+                        CommentaireFormateur: stagiaire.commentaire || ''
+                    }))
+                };
+
+                console.log('📤 Envoi des données de présence à SharePoint:', presenceData);
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-make-apikey': API_KEY
+                    },
+                    body: JSON.stringify(presenceData)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Données de présence envoyées à SharePoint avec succès');
+                    return true;
+                } else {
+                    console.error('❌ Erreur lors de l\'envoi des données de présence:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Erreur réseau lors de l\'envoi des données de présence:', error);
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
