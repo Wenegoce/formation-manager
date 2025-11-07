@@ -2,9 +2,16 @@ const crypto = require("crypto");
 
 module.exports = async function (context, req) {
   try {
-    // ✅ Accepte POST (JSON body) ou GET (query string)
-    const formationId = req.body?.formationId || req.query?.fid;
-    const stagiaireId = req.body?.stagiaireId || req.query?.stid;
+    // ✅ Compatibilité GET et POST (runtime v4)
+    let formationId, stagiaireId;
+
+    if (req.method === "GET") {
+      formationId = req.query.get("fid");
+      stagiaireId = req.query.get("stid");
+    } else if (req.method === "POST") {
+      formationId = req.body?.formationId;
+      stagiaireId = req.body?.stagiaireId;
+    }
 
     if (!formationId || !stagiaireId) {
       context.res = { status: 400, body: "Champs manquants." };
@@ -17,7 +24,6 @@ module.exports = async function (context, req) {
       return;
     }
 
-    // Durée de validité : 7 jours
     const expires = Math.floor(Date.now() / 1000) + 7 * 24 * 3600;
     const data = `${formationId}.${stagiaireId}.${expires}`;
     const sig = crypto.createHmac("sha256", key).update(data).digest("hex");
@@ -26,14 +32,13 @@ module.exports = async function (context, req) {
       formationId
     )}&stid=${encodeURIComponent(stagiaireId)}&exp=${expires}&sig=${sig}`;
 
-    // ✅ Réponse JSON explicite
     context.res = {
       status: 200,
       headers: { "Content-Type": "application/json" },
       body: { url },
     };
   } catch (err) {
-    context.log.error("Erreur issue-link :", err);
+    context.log.error("Erreur issue-link:", err);
     context.res = { status: 500, body: "Erreur interne du serveur." };
   }
 };
