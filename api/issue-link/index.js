@@ -2,13 +2,16 @@ const crypto = require("crypto");
 
 module.exports = async function (context, req) {
   try {
-    // ✅ Compatibilité GET et POST (runtime v4)
+    // --- Lecture robuste des paramètres (GET ou POST, v3 ou v4) ---
     let formationId, stagiaireId;
 
-    if (req.method === "GET") {
-      formationId = req.query.get("fid");
-      stagiaireId = req.query.get("stid");
-    } else if (req.method === "POST") {
+    if ((req.method || "").toUpperCase() === "GET") {
+      const q = req.query || {};
+      // v3: q.fid ; v4 (éventuel): q.get('fid')
+      formationId = q.fid ?? (typeof q.get === "function" ? q.get("fid") : undefined);
+      stagiaireId = q.stid ?? (typeof q.get === "function" ? q.get("stid") : undefined);
+    } else {
+      // POST JSON
       formationId = req.body?.formationId;
       stagiaireId = req.body?.stagiaireId;
     }
@@ -24,7 +27,7 @@ module.exports = async function (context, req) {
       return;
     }
 
-    const expires = Math.floor(Date.now() / 1000) + 7 * 24 * 3600;
+    const expires = Math.floor(Date.now() / 1000) + 7 * 24 * 3600; // 7 jours
     const data = `${formationId}.${stagiaireId}.${expires}`;
     const sig = crypto.createHmac("sha256", key).update(data).digest("hex");
 
