@@ -14,6 +14,5 @@ module.exports = async function (context, req) {
   const sig = crypto.createHmac("sha256", key).update(data).digest("hex");
 
   const url = `https://app.formation-manager.wenegoce.fr/?fid=${formationId}&stid=${stagiaireId}&exp=${expires}&sig=${sig}`;
-
   context.res = { status: 200, body: { url } };
 };
