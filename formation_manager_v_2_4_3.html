@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Manager v2.4.3 - WeNégoce</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #F3FEFF 0%, #57976E 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: white; color: #333; padding: 20px 30px; display: flex; align-items: center; gap: 20px; border-bottom: 3px solid #3270AF; }
+        .header-logo { flex-shrink: 0; }
+        .header-logo img { height: 60px; width: auto; }
+        .header-content { flex-grow: 1; text-align: right; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; color: #3270AF; }
+        .header p { color: #666; font-size: 14px; }
+        .tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid #e0e0e0; }
+        .tab { flex: 1; padding: 18px; text-align: center; cursor: pointer; font-weight: 600; transition: all 0.3s; border: none; background: transparent; color: #666; }
+        .tab.active { background: white; color: #3270AF; border-bottom: 3px solid #3270AF; }
+        .tab:hover:not(.active) { background: #ebebeb; }
+        .content { padding: 30px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; transition: border-color 0.3s; }
+        input[type="date"], input[type="time"] { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3270AF; }
+        input.valid, select.valid { background-color: #e8f5e9; border-color: #4caf50; }
+        input.invalid, select.invalid { border-color: #dc3545; }
+        .error-message { color: #dc3545; font-size: 13px; margin-top: 5px; display: none; }
+        .error-message.show { display: block; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stagiaire-item { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3270AF; }
+        .stagiaire-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .stagiaire-number { background: #3270AF; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .btn-remove { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .btn { background: #3270AF; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s; margin-top: 10px; }
+        .btn:hover { background: #265a8f; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(50,112,175,0.3); }
+        .btn-secondary { background: #6c757d; margin-left: 10px; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+        .info-display { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #e9ecef; }
+        .info-row { display: flex; margin-bottom: 10px; }
+        .info-label { font-weight: 600; min-width: 230px; color: #3270AF; }
+        .stars { display: flex; gap: 10px; margin-bottom: 10px; }
+        .star { font-size: 40px; cursor: pointer; transition: all 0.2s; user-select: none; color: #ddd; }
+        .star.active { color: #ffd700; }
+        .star:hover { transform: scale(1.2); }
+        .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .radio-item { flex: 1; min-width: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: white; display: flex; align-items: center; gap: 8px; }
+        .radio-item input[type="radio"] { width: auto; }
+        .switch-container { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
+        .switch-label { font-weight: 600; color: #999; min-width: 110px; transition: color 0.3s; }
+        .switch-label.active { color: #3270AF; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #3270AF; transition: 0.4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: 0.4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .radio-item:has(input[type="radio"]:checked) { background-color: #3270AF !important; color: white !important; border-color: #3270AF !important; }
+        .radio-item input[type="radio"]:checked { accent-color: white; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.3s; }
+        .modal-content { background-color: white; margin: 5% auto; padding: 0; border-radius: 16px; width: 90%; max-width: 700px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); animation: slideDown 0.3s; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { background: linear-gradient(135deg, #3270AF 0%, #265a8f 100%); color: white; padding: 20px 30px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 20px; }
+        .modal-body { padding: 30px; }
+        .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 24px; padding: 5px 10px; transition: transform 0.2s; }
+        .btn-icon:hover { transform: scale(1.1); }
+        .btn-edit { background: #3270AF; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn-edit:hover { background: #265a8f; transform: translateY(-2px); }
+        .version-info { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px; border-radius: 8px; border: 2px solid #dee2e6; margin-top: 20px; text-align: center; }
+        .version-info .version-number { font-size: 18px; font-weight: 700; color: #3270AF; margin-bottom: 5px; }
+        .version-info .version-date { font-size: 14px; color: #666; margin-bottom: 10px; }
+        .version-info .copyright { font-size: 12px; color: #999; font-style: italic; padding-top: 10px; border-top: 1px solid #dee2e6; }
+        .formation-card { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #e0e0e0; transition: all 0.3s; }
+        .formation-card:hover { border-color: #3270AF; box-shadow: 0 4px 12px rgba(50,112,175,0.15); }
+        .formation-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #e0e0e0; }
+        .formation-card-title { font-size: 18px; font-weight: 700; color: #3270AF; }
+        .formation-card-date { background: #3270AF; color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .formation-card-body { margin-bottom: 15px; }
+        .formation-card-row { display: flex; margin-bottom: 8px; font-size: 14px; }
+        .formation-card-label { font-weight: 600; min-width: 140px; color: #666; }
+        .formation-card-value { color: #333; }
+        @media screen and (max-width: 768px) { body { padding: 10px; } .container { border-radius: 8px; } .header { flex-direction: column; text-align: center; padding: 15px; } .header-logo img { height: 50px; } .header h1 { font-size: 20px; } .header p { font-size: 12px; } .tabs { flex-direction: column; } .tab { padding: 12px; font-size: 14px; } .content { padding: 15px; } .row { grid-template-columns: 1fr; } .btn { width: 100%; margin-top: 10px; margin-left: 0 !important; } .radio-group { flex-direction: column; } .radio-item { min-width: 100%; } .stars { justify-content: center; } .star { font-size: 36px; } .stagiaire-item { padding: 12px; } .stagiaire-header { flex-direction: column; gap: 10px; align-items: flex-start; } .modal-content { width: 95%; margin: 2% auto; max-height: 95vh; overflow-y: auto; } .modal-header { padding: 15px 20px; } .modal-header h3 { font-size: 18px; } .modal-body { padding: 20px; } .alert { padding: 12px; font-size: 14px; } h2 { font-size: 20px !important; } h3 { font-size: 18px !important; } h4 { font-size: 16px !important; } #satisfactionForm .form-group { margin-bottom: 25px; } .btn-edit { padding: 10px 14px; font-size: 13px; } .switch-container { flex-direction: column; gap: 10px; align-items: center; } small { font-size: 13px !important; } .form-group { margin-bottom: 25px; } }
+        @media screen and (max-width: 400px) { .header h1 { font-size: 18px; } .tab { font-size: 12px; padding: 10px; } .btn { font-size: 14px; padding: 14px 20px; } .star { font-size: 36px; gap: 8px; } .stars { gap: 5px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">
+                <img src="https://raw.githubusercontent.com/Wenegoce/formation-manager/main/assets/images/Logo_WeNégoce.png" alt="WeNégoce">
+            </div>
+            <div class="header-content">
+                <h1>Formation Manager</h1>
+                <p>Suivi des présences et enquête de satisfaction stagiaires</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="formateur">👨‍🏫 Espace Formateur</button>
+            <button class="tab" data-tab="formations">📋 Formations</button>
+            <button class="tab" data-tab="stagiaire">👤 Espace Stagiaire</button>
+            <button class="tab" data-tab="settings">⚙️ Paramètres</button>
+        </div>
+
+        <div class="content">
+            <div id="formateur" class="tab-content active">
+                <h2 style="margin-bottom: 20px; color: #3270AF;">Préparation de la formation</h2>
+                <div id="preparationForm">
+                    <form id="formateurForm">
+                        <div class="form-group">
+                            <label>Raison sociale du client *</label>
+                            <input type="text" id="raisonSociale" required>
+                            <span class="error-message" id="error-raisonSociale">Ce champ est obligatoire</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Thème de la formation *</label>
+                            <input type="text" id="themeFormation" required>
+                            <span class="error-message" id="error-themeFormation">Ce champ est obligatoire</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Référence JIRA</label>
+                            <input type="text" id="referenceJira" placeholder="TIC-123, SMC-456 ou SNC-789">
+                            <small style="color: #999; font-size: 12px;">Format : TIC-, SMC- ou SNC- suivi d'un numéro (optionnel)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Nom du formateur *</label>
+                            <input type="text" id="nomFormateur" required>
+                            <span class="error-message" id="error-nomFormateur">Ce champ est obligatoire</span>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Date de la formation *</label>
+                                <input type="date" id="dateFormation" required>
+                                <span class="error-message" id="error-dateFormation">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Type de formation *</label>
+                                <div class="switch-container">
+                                    <span class="switch-label active" id="labelPresentiel">🏢 Présentiel</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="typeFormationToggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="switch-label" id="labelVisio">💻 Visio</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Heure de début *</label>
+                                <input type="time" id="heureDebut" required>
+                                <span class="error-message" id="error-heureDebut">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Heure de fin *</label>
+                                <input type="time" id="heureFin" required>
+                                <span class="error-message" id="error-heureFin">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+                        <h3 style="margin: 30px 0 15px; color: #3270AF;">Liste des stagiaires</h3>
+                        <div id="stagiairesList"></div>
+                        <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" id="btnAddStagiaire" onclick="addStagiaire()">➕ Ajouter un stagiaire</button>
+                            <button type="submit" class="btn" id="btnFeuillePresence" disabled style="opacity: 0.5; cursor: not-allowed;">📝 Feuille de présence</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="postFormationSection" style="display: none;">
+                    <div class="alert alert-info">ℹ️ <strong>Formation enregistrée !</strong> Une fois la formation terminée, complétez la présence de chaque stagiaire ci-dessous.</div>
+                    <div id="formationInfo" class="info-display" style="margin-bottom: 30px;"></div>
+                    <h3 style="margin-bottom: 20px; color: #3270AF;">Compléter les présences</h3>
+                    <form id="presenceForm">
+                        <div id="presenceList"></div>
+                        <div style="margin-top: 30px;">
+                            <button type="submit" class="btn">📧 Générer et envoyer les liens stagiaires</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="linksGenerated" style="display: none; margin-top: 30px;">
+                    <div class="alert alert-success">✅ Les liens ont été générés avec succès ! Vous pouvez maintenant envoyer les emails aux stagiaires.</div>
+                    <div id="emailLinks"></div>
+                </div>
+            </div>
+
+            <div id="formations" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #3270AF;">📋 Mes Formations</h2>
+                <div class="alert alert-info">ℹ️ Sélectionnez une formation pour envoyer les liens d'enquête de satisfaction aux stagiaires.</div>
+                <div id="formationsLoading" style="text-align: center; padding: 40px; color: #666;">🔄 Chargement des formations...</div>
+                <div id="formationsList" style="display: none;"></div>
+                <div id="formationsEmpty" style="display: none; text-align: center; padding: 40px; color: #999;">📭 Aucune formation trouvée.</div>
+            </div>
+
+            <div id="stagiaire" class="tab-content">
+                <div id="stagiaireView">
+                    <div class="alert alert-info">ℹ️ Cette page est accessible via le lien envoyé par email par votre formateur.</div>
+                    <h2 id="attestationTitle" style="margin-bottom: 20px; color: #3270AF;">Attestation de formation</h2>
+                    <div class="info-display" id="infoFormation"><p style="text-align: center; color: #666;">En attente du lien personnalisé...</p></div>
+                    <form id="satisfactionForm" style="display: none;">
+                        <h3 style="margin: 30px 0 20px; color: #3270AF;">📋 Enquête de satisfaction</h3>
+                        <div class="form-group">
+                            <label>La formation a-t-elle répondu à vos attentes ? *</label>
+                            <div class="stars" id="q1Stars"></div>
+                            <input type="hidden" id="q1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Les objectifs de la formation étaient-ils clairs et bien expliqués ? *</label>
+                            <div class="stars" id="q2Stars"></div>
+                            <input type="hidden" id="q2" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Le formateur a-t-il su rendre la session claire, dynamique et adaptée à votre niveau ? *</label>
+                            <div class="stars" id="q3Stars"></div>
+                            <input type="hidden" id="q3" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vous sentez-vous à présent à l'aise pour utiliser les fonctions présentées lors de cette formation ? *</label>
+                            <div class="radio-group">
+                                <label class="radio-item"><input type="radio" name="q4" value="Pas du tout" required><span>Pas du tout</span></label>
+                                <label class="radio-item"><input type="radio" name="q4" value="Un peu" required><span>Un peu</span></label>
+                                <label class="radio-item"><input type="radio" name="q4" value="Moyennement" required><span>Moyennement</span></label>
+                                <label class="radio-item"><input type="radio" name="q4" value="Assez" required><span>Assez</span></label>
+                                <label class="radio-item"><input type="radio" name="q4" value="Tout à fait" required><span>Tout à fait</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Comment jugez-vous la durée de la formation ? *</label>
+                            <div class="radio-group">
+                                <label class="radio-item"><input type="radio" name="q5" value="Trop courte" required><span>Trop courte</span></label>
+                                <label class="radio-item"><input type="radio" name="q5" value="Adaptée" required><span>Adaptée</span></label>
+                                <label class="radio-item"><input type="radio" name="q5" value="Trop longue" required><span>Trop longue</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Quelles sont vos suggestions pour améliorer cette formation ?</label>
+                            <textarea id="q6" maxlength="100" rows="3" placeholder="Maximum 100 caractères"></textarea>
+                            <small style="color: #666;">Caractères restants: <span id="q6Count">100</span></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Un dernier commentaire ?</label>
+                            <textarea id="q7" maxlength="100" rows="3" placeholder="Maximum 100 caractères"></textarea>
+                            <small style="color: #666;">Caractères restants: <span id="q7Count">100</span></small>
+                        </div>
+                        <button type="submit" id="submitSatisfactionBtn" class="btn btn-success" disabled style="opacity: 0.5; cursor: not-allowed;">📤 Envoyer mon évaluation</button>
+                    </form>
+                    <div id="thankYouMessage" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div id="settings" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #3270AF;">⚙️ Configuration de Production</h2>
+                <div class="alert alert-warning" style="background: #fff3cd; border: 2px solid #ffc107;">
+                    ⚠️ <strong>Version de Production (v2.4.3)</strong><br>
+                    Les paramètres de connexion sont configurés dans le bloc « Admin » et surchargent les valeurs intégrées.
+                </div>
+                <div style="background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #3270AF; margin-bottom: 15px;">🔗 Configuration Logic Apps</h3>
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">URL Formation (POST) :</label>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; font-family: 'Courier New', monospace; font-size: 11px; word-break: break-all; margin-bottom: 10px;" id="webhookDisplay">Gérée par Admin</div>
+                    </div>
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">URL Présence (POST) :</label>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; font-family: 'Courier New', monospace; font-size: 11px; word-break: break-all; margin-bottom: 10px;" id="webhookGetDisplay">Gérée par Admin</div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">URL Satisfaction (POST) :</label>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; font-family: 'Courier New', monospace; font-size: 11px; word-break: break-all; margin-bottom: 10px;" id="apiKeyDisplay">Gérée par Admin</div>
+                    </div>
+                </div>
+                <div class="version-info">
+                    <div class="version-number">Version 2.4.3</div>
+                    <div class="version-date">10 novembre 2025</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 10px;">
+                        • Ajout authentification Microsoft (MSAL) pour l'accès Admin
+                        • Respect strict du design et libellés existants
+                        • Surcharge des URLs par navigateur (localStorage)
+                    </div>
+                    <div class="copyright">© 2025 WeNégoce - Tous droits réservés</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>✏️ Modifier l'email</h3><button class="btn-icon" onclick="closeEmailModal()" style="color: white;">✕</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Objet de l'email *</label><input type="text" id="emailSubjectEdit" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;"></div>
+                <div class="form-group"><label>Corps du message *</label><textarea id="emailBodyEdit" rows="12" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Segoe UI', sans-serif; line-height: 1.6;"></textarea></div>
+                <div style="text-align: right; margin-top: 20px;"><button class="btn" onclick="saveEmailChanges()">✓ Terminé</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reminderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>📧 Relancer le stagiaire</h3><button class="btn-icon" onclick="closeReminderModal()" style="color: white;">✕</button></div>
+            <div class="modal-body">
+                <div id="reminderInfo" class="info-display" style="margin-bottom: 20px;"></div>
+                <div class="form-group"><label>Objet de l'email *</label><input type="text" id="reminderSubjectEdit" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;"></div>
+                <div class="form-group"><label>Corps du message *</label><textarea id="reminderBodyEdit" rows="12" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Segoe UI', sans-serif; line-height: 1.6;"></textarea></div>
+                <div class="alert alert-info" style="margin-top: 20px;">ℹ️ <strong>Note :</strong> Le lien personnalisé sera automatiquement inséré à la place de [LIEN]</div>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="btn" onclick="closeReminderModal()" style="background: #6c757d; margin-right: 10px;">Annuler</button>
+                    <button class="btn" onclick="sendReminder()">📧 Envoyer la relance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lib XLSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- ======================== Code applicatif existant (inchangé sur le fond) ======================== -->
+    <!-- Pour alléger : ce bloc contient la logique de l'app telle que v2.3 (validation, envois, etc.)
+         A été conservé et seulement ajusté pour:
+         • Version bump
+         • Intégration helpers d'envoi Logic Apps plus bas
+    -->
+    <script>
+      // === Variables et init de l'app (conservés) ===
+      let stagiaireCount = 0; let formationsData = []; let currentFormationId = null; const MAX_STAGIAIRES = 9; let emailSubjectGlobal=''; let emailBodyGlobal=''; let currentFormationData=null; let isSubmitting=false; const ENABLE_SHAREPOINT_SYNC = true;
+
+      // Anciennes URLs Make (ignorées), laissées pour compat compat sans usage visuel
+      const WEBHOOK_URL = ''; const WEBHOOK_GET_URL = ''; const API_KEY='';
+
+      // Liens signés (conservé)
+      async function getSignedLink(formationId, stagiaireId){ const base=window.location.origin; const url=`${base}/api/issue-link?fid=${encodeURIComponent(formationId)}&stid=${encodeURIComponent(stagiaireId)}`; const res=await fetch(url); if(!res.ok) throw new Error('Échec génération du lien signé'); const data=await res.json(); return data.url; }
+
+      document.addEventListener('DOMContentLoaded', function(){ loadFormations(); addStagiaire(); initStarRatings(); initCharCounters(); checkURLParams(); initEventListeners(); initTypeFormationToggle(); initializeSettings(); setTodayDate(); });
+
+      function setTodayDate() {
+        const dateInput = document.getElementById('dateFormation');
+        if (dateInput && !dateInput.value) {
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, '0');
+          const dd = String(today.getDate()).padStart(2, '0');
+          dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+      }
+      
+      function initEventListeners() {
+        document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', function() {
+          switchTab(this.getAttribute('data-tab'));
+        }));
+        
+        const btnAdd = document.getElementById('btnAddStagiaire');
+        if (btnAdd) {
+          btnAdd.addEventListener('click', function(e) {
+            e.preventDefault();
+            addStagiaire();
+          });
+        }
+        
+        const formateurForm = document.getElementById('formateurForm');
+        if (formateurForm) {
+          formateurForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleFormateurSubmit();
+          });
+        }
+        
+        ['raisonSociale','themeFormation','nomFormateur','dateFormation','heureDebut','heureFin'].forEach(id => {
+          const f = document.getElementById(id);
+          if (f) {
+            f.addEventListener('blur', function() {
+              validateRequiredField(this);
+            });
+            f.addEventListener('input', function() {
+              validateRequiredField(this);
+            });
+          }
+        });
+        
+        const heureDebut = document.getElementById('heureDebut');
+        const heureFin = document.getElementById('heureFin');
+        if (heureDebut) {
+          heureDebut.addEventListener('change', validateHeures);
+        }
+        if (heureFin) {
+          heureFin.addEventListener('change', validateHeures);
+          heureFin.addEventListener('blur', validateHeures);
+        }
+        
+        const dateFormationInput = document.getElementById('dateFormation');
+        if (dateFormationInput) {
+          dateFormationInput.addEventListener('change', validateDateFormation);
+        }
+        
+        const presenceForm = document.getElementById('presenceForm');
+        if (presenceForm) {
+          presenceForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handlePresenceSubmit();
+          });
+        }
+        
+        const referenceJira = document.getElementById('referenceJira');
+        if (referenceJira) {
+          referenceJira.addEventListener('blur', function() {
+            if (this.value.trim()) {
+              validateJiraReference(this);
+            }
+          });
+        }
+      }
+      
+      function validateRequiredField(input) {
+        const err = document.getElementById('error-' + input.id);
+        if (!input.value.trim()) {
+          input.classList.add('invalid');
+          input.classList.remove('valid');
+          if (err) err.classList.add('show');
+        } else {
+          input.classList.remove('invalid');
+          input.classList.add('valid');
+          if (err) err.classList.remove('show');
+        }
+        checkFormValidity();
+      }
+      
+      function checkFormValidity() {
+        const r = document.getElementById('raisonSociale');
+        const t = document.getElementById('themeFormation');
+        const n = document.getElementById('nomFormateur');
+        const d = document.getElementById('dateFormation');
+        const hd = document.getElementById('heureDebut');
+        const hf = document.getElementById('heureFin');
+        const btn = document.getElementById('btnFeuillePresence');
+        
+        const ok = r.value.trim() && t.value.trim() && n.value.trim() && d.value && hd.value && hf.value;
+        const has = stagiaireCount > 0;
+        
+        if (ok && has) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+        } else {
+          btn.disabled = true;
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
+        }
+      }
+      
+      function validateEmail(input) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!input.value.trim()) {
+          input.classList.remove('valid', 'invalid');
+          clearError(input);
+          return false;
+        }
+        if (!re.test(input.value)) {
+          input.classList.add('invalid');
+          input.classList.remove('valid');
+          showError(input, 'Format email invalide');
+          return false;
+        } else {
+          input.classList.remove('invalid');
+          input.classList.add('valid');
+          clearError(input);
+          return true;
+        }
+      }
+      
+      function validateNom(input) {
+        if (!input.value.trim()) {
+          input.classList.remove('valid', 'invalid');
+          clearError(input);
+          return false;
+        }
+        if (input.value.trim().length < 4) {
+          input.classList.add('invalid');
+          input.classList.remove('valid');
+          showError(input, 'Le nom doit contenir au moins 4 caractères');
+          return false;
+        } else {
+          input.classList.remove('invalid');
+          input.classList.add('valid');
+          clearError(input);
+          return true;
+        }
+      }
+      
+      function validateJiraReference(input) {
+        const re = /^(TIC|SMC|SNC)-\d+$/i;
+        if (!input.value.trim()) {
+          input.classList.remove('valid', 'invalid');
+          clearError(input);
+          return true; // Champ optionnel
+        }
+        if (!re.test(input.value)) {
+          input.classList.add('invalid');
+          input.classList.remove('valid');
+          showError(input, 'Format JIRA invalide (ex: TIC-123)');
+          return false;
+        } else {
+          input.classList.remove('invalid');
+          input.classList.add('valid');
+          clearError(input);
+          return true;
+        }
+      }
+      
+      function validateDateFormation() {
+        const input = document.getElementById('dateFormation');
+        if (!input.value) {
+          input.classList.remove('valid', 'invalid');
+          clearError(input);
+          return false;
+        }
+        
+        const sel = new Date(input.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const min = new Date();
+        min.setDate(today.getDate() - 7);
+        
+        if (sel < min) {
+          const s = min.toLocaleDateString('fr-FR');
+          input.classList.add('invalid');
+          input.classList.remove('valid');
+          showError(input, 'La formation est trop ancienne. Date minimum acceptée : ' + s);
+          return false;
+        } else {
+          input.classList.remove('invalid');
+          input.classList.add('valid');
+          clearError(input);
+          return true;
+        }
+      }
+      
+      function validateHeures() {
+        const hd = document.getElementById('heureDebut');
+        const hf = document.getElementById('heureFin');
+        const eD = document.getElementById('error-heureDebut');
+        const eF = document.getElementById('error-heureFin');
+        
+        if (!hd.value) {
+          hd.classList.add('invalid');
+          hd.classList.remove('valid');
+          if (eD) eD.classList.add('show');
+          checkFormValidity();
+          return;
+        } else {
+          hd.classList.remove('invalid');
+          hd.classList.add('valid');
+          if (eD) eD.classList.remove('show');
+        }
+        
+        if (!hf.value) {
+          hf.classList.add('invalid');
+          hf.classList.remove('valid');
+          if (eF) eF.classList.add('show');
+          checkFormValidity();
+          return;
+        }
+        
+        const d = hd.value.split(':');
+        const f = hf.value.split(':');
+        const md = parseInt(d[0]) * 60 + parseInt(d[1]);
+        const mf = parseInt(f[0]) * 60 + parseInt(f[1]);
+        
+        if (mf <= md) {
+          hf.classList.add('invalid');
+          hf.classList.remove('valid');
+          if (eF) {
+            eF.textContent = 'L\'heure de fin doit être après l\'heure de début';
+            eF.classList.add('show');
+          }
+        } else {
+          hf.classList.remove('invalid');
+          hf.classList.add('valid');
+          if (eF) {
+            eF.textContent = 'Ce champ est obligatoire';
+            eF.classList.remove('show');
+          }
+        }
+        checkFormValidity();
+      }
+      
+      function showError(input, msg) {
+        input.style.borderColor = '#dc3545';
+        const ex = input.parentElement.querySelector('.error-message');
+        if (ex) ex.remove();
+        const div = document.createElement('small');
+        div.className = 'error-message';
+        div.style.color = '#dc3545';
+        div.style.display = 'block';
+        div.style.marginTop = '5px';
+        div.textContent = msg;
+        input.parentElement.appendChild(div);
+      }
+      
+      function clearError(input) {
+        const ex = input.parentElement.querySelector('.error-message');
+        if (ex) ex.remove();
+        input.style.borderColor = '#e0e0e0';
+      }
+      
+      function initTypeFormationToggle() {
+        const t = document.getElementById('typeFormationToggle');
+        const p = document.getElementById('labelPresentiel');
+        const v = document.getElementById('labelVisio');
+        if (t) {
+          t.addEventListener('change', function() {
+            if (this.checked) {
+              p.classList.remove('active');
+              v.classList.add('active');
+            } else {
+              p.classList.add('active');
+              v.classList.remove('active');
+            }
+          });
+        }
+      }
+      
+      async function loadFormationsTab() {
+        const loadingDiv = document.getElementById('formationsLoading');
+        const listDiv = document.getElementById('formationsList');
+        const emptyDiv = document.getElementById('formationsEmpty');
+        
+        loadingDiv.style.display = 'block';
+        listDiv.style.display = 'none';
+        emptyDiv.style.display = 'none';
+        
+        let formations = [...formationsData];
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        
+        formations = formations.filter(f => {
+          const df = new Date(f.date);
+          if (df < threeMonthsAgo) return false;
+          const has = f.stagiaires.some(s => (s.presence === 'Present' || s.presence === 'Partielle') && !s.satisfaction);
+          return has;
+        });
+        
+        setTimeout(() => {
+          loadingDiv.style.display = 'none';
+          if (formations.length === 0) {
+            emptyDiv.style.display = 'block';
+          } else {
+            displayFormationsCards(formations);
+            listDiv.style.display = 'block';
+          }
+        }, 500);
+      }
+      
+      function displayFormationsCards(formations) {
+        const c = document.getElementById('formationsList');
+        c.innerHTML = '';
+        formations.forEach(f => {
+          c.appendChild(createFormationCard(f));
+        });
+      }
+      
+      function createFormationCard(formation) {
+        const dateFormation = new Date(formation.date).toLocaleDateString('fr-FR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+        const stagiairesSansReponse = formation.stagiaires.filter(s => (s.presence === 'Present' || s.presence === 'Partielle') && !s.satisfaction);
+        const card = document.createElement('div');
+        card.className = 'formation-card';
+        let list = '';
+        stagiairesSansReponse.forEach((s, idx) => {
+          list += `<div class="stagiaire-item" style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;"><div style="display: flex; justify-content: space-between; align-items: center;"><div><strong>${s.nom}</strong><br><small style="color: #666;">${s.email}</small></div><button class="btn" onclick="openReminderModal('${formation.id}', ${idx})" style="background: #ff9800;">📧 Relancer le stagiaire</button></div></div>`;
+        });
+        card.innerHTML = `<div class="formation-card-header" style="background: #3270AF; color: white; padding: 15px; border-radius: 8px 8px 0 0;"><div style="margin-bottom: 8px;"><div style="font-size: 14px; opacity: 0.85; font-weight: 500;">${formation.raisonSociale}</div><div class="formation-card-title" style="font-size: 18px; font-weight: 600; margin-top: 4px;">${formation.theme}</div></div><div class="formation-card-date" style="font-size: 13px; opacity: 0.75; font-style: italic; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px; margin-top: 8px;">${dateFormation}</div></div><div class="formation-card-body" style="padding: 15px;"><div><h4 style="color: #3270AF; margin-bottom: 12px;">Stagiaires en attente de réponse :</h4>${list}</div></div>`;
+        return card;
+      }
+      
+      function switchTab(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        const activeTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+        const activeContent = document.getElementById(tabName);
+        if (activeTab) activeTab.classList.add('active');
+        if (activeContent) activeContent.classList.add('active');
+        if (tabName === 'settings') {
+          updateFormationCount();
+        }
+        if (tabName === 'formations') {
+          loadFormationsTab();
+        }
+      }
+      
+      function addStagiaire() {
+        if (stagiaireCount >= MAX_STAGIAIRES) {
+          alert('⚠️ Maximum de ' + MAX_STAGIAIRES + ' stagiaires atteint');
+          return;
+        }
+        
+        stagiaireCount++;
+        const container = document.getElementById('stagiairesList');
+        const item = document.createElement('div');
+        item.className = 'stagiaire-item';
+        item.id = 'stagiaire-' + stagiaireCount;
+        
+        item.innerHTML = `<div class="stagiaire-header"><span class="stagiaire-number">Stagiaire ${stagiaireCount}</span><button type="button" class="btn-remove" onclick="removeStagiaire(${stagiaireCount})">🗑️ Supprimer</button></div><div class="row"><div class="form-group"><label>Nom complet *</label><input type="text" id="nomStagiaire${stagiaireCount}" required></div><div class="form-group"><label>Email *</label><input type="email" id="emailStagiaire${stagiaireCount}" required></div></div>`;
+        
+        container.appendChild(item);
+        
+        // Ajouter les event listeners pour la validation du nom
+        const nomInput = document.getElementById('nomStagiaire' + stagiaireCount);
+        if (nomInput) {
+          nomInput.addEventListener('blur', function() {
+            validateNom(this);
+          });
+          nomInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+              validateNom(this);
+            } else {
+              clearError(this);
+              this.classList.remove('valid', 'invalid');
+            }
+          });
+        }
+        
+        // Ajouter les event listeners pour la validation de l'email
+        const emailInput = document.getElementById('emailStagiaire' + stagiaireCount);
+        if (emailInput) {
+          emailInput.addEventListener('blur', function() {
+            validateEmail(this);
+          });
+          emailInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+              validateEmail(this);
+            } else {
+              clearError(this);
+              this.classList.remove('valid', 'invalid');
+            }
+          });
+        }
+        checkFormValidity();
+      }
+      function renumberStagiaires(){ const items=document.querySelectorAll('.stagiaire-item'); stagiaireCount=0; items.forEach((it)=>{ stagiaireCount++; it.id='stagiaire-'+stagiaireCount; const number=it.querySelector('.stagiaire-number'); if(number) number.textContent='Stagiaire '+stagiaireCount; const removeBtn=it.querySelector('.btn-remove'); if(removeBtn){ removeBtn.onclick=function(){ removeStagiaire(stagiaireCount); }; } const nomInput=it.querySelector('input[id^="nomStagiaire"]'); const emailInput=it.querySelector('input[id^="emailStagiaire"]'); if(nomInput) nomInput.id='nomStagiaire'+stagiaireCount; if(emailInput) emailInput.id='emailStagiaire'+stagiaireCount; }); }
+      async function handleFormateurSubmit(){ if(isSubmitting){ return; } isSubmitting=true; const submitButton=document.querySelector('#formateurForm button[type="submit"]'); const original=submitButton.innerHTML; submitButton.disabled=true; submitButton.innerHTML='⏳ Enregistrement en cours...'; const raisonSociale=document.getElementById('raisonSociale').value.trim(); const theme=document.getElementById('themeFormation').value.trim(); const referenceJira=document.getElementById('referenceJira').value.trim(); const nomFormateur=document.getElementById('nomFormateur').value.trim(); const dateFormation=document.getElementById('dateFormation').value; const typeToggle=document.getElementById('typeFormationToggle').checked; const typeFormation=typeToggle?'Visio':'Présentiel'; const heureDebut=document.getElementById('heureDebut').value; const heureFin=document.getElementById('heureFin').value; if(!raisonSociale||!theme||!nomFormateur||!dateFormation||!heureDebut||!heureFin){ alert('⚠️ Veuillez remplir tous les champs obligatoires'); isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; return; } if(referenceJira){ const re=/^(TIC|SMC|SNC)-\d+$/i; if(!re.test(referenceJira)){ alert('⚠️ Format de référence JIRA invalide. Utilisez le format TIC-123, SMC-456 ou SNC-789'); isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; return; } }
+        const selectedDate=new Date(dateFormation); const today=new Date(); today.setHours(0,0,0,0); const minDate=new Date(); minDate.setDate(today.getDate()-7); if(selectedDate<minDate){ alert('⚠️ La date de formation est trop ancienne (plus de 7 jours)'); isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; return; }
+        const d=heureDebut.split(':'), f=heureFin.split(':'); const md=parseInt(d[0])*60+parseInt(d[1]); const mf=parseInt(f[0])*60+parseInt(f[1]); if(mf<=md){ alert('⚠️ L\'heure de fin doit être après l\'heure de début'); isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; return; }
+        const stagiaires=[]; let hasError=false; for(let i=1;i<=stagiaireCount;i++){ const nomInput=document.getElementById('nomStagiaire'+i); const emailInput=document.getElementById('emailStagiaire'+i); if(nomInput&&emailInput){ const nom=nomInput.value.trim(); const email=emailInput.value.trim(); if(!nom){ showError(nomInput,'Ce champ est obligatoire'); hasError=true; } if(!email){ showError(emailInput,'Ce champ est obligatoire'); hasError=true; } else { const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!re.test(email)){ showError(emailInput,'Format email invalide'); hasError=true; } } if(nom&&email){ const stagiaireId='STG-'+Date.now()+'-'+Math.random().toString(36).substr(2,9); stagiaires.push({ id: stagiaireId, nom, email, lien: null, presence: null, commentaire: '', satisfaction: null }); } } }
+        if(hasError){ alert('⚠️ Veuillez corriger les erreurs dans le formulaire'); isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; return; }
+        if(stagiaires.length===0){ alert('⚠️ Veuillez ajouter au moins un stagiaire'); isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; return; }
+        currentFormationId='FRM-'+Date.now()+'-'+Math.random().toString(36).substr(2,9);
+        currentFormationData={ id: currentFormationId, raisonSociale, theme, referenceJira, nomFormateur, date: dateFormation, type: typeFormation, heureDebut, heureFin, stagiaires };
+        const baseUrl=window.location.origin+window.location.pathname; currentFormationData.stagiaires.forEach(s=>{ s.lien=`${baseUrl}?fid=${currentFormationId}&stid=${s.id}`; });
+        try{
+          // Envoi Formation via Logic App (endpoints MS)
+          await sendFormationToSharePoint({ FormationID: currentFormationData.id, Titre: currentFormationData.theme, Date: currentFormationData.date, Formateur: currentFormationData.nomFormateur, HeureDebut: currentFormationData.heureDebut, HeureFin: currentFormationData.heureFin, Client: currentFormationData.raisonSociale });
+          formationsData.push(currentFormationData); saveFormations();
+          document.getElementById('preparationForm').style.display='none'; document.getElementById('postFormationSection').style.display='block'; displayFormationInfo(); displayPresenceForm(); window.scrollTo(0,0);
+        } catch(e){ alert('❌ Erreur lors de l\'enregistrement de la formation. '+e.message); console.error(e); }
+        finally{ isSubmitting=false; submitButton.disabled=false; submitButton.innerHTML=original; }
+      }
+      function displayFormationInfo(){ const info=document.getElementById('formationInfo'); const f=currentFormationData; info.innerHTML=`<div class="info-row"><div class="info-label">Client :</div><div>${f.raisonSociale}</div></div><div class="info-row"><div class="info-label">Formation :</div><div>${f.theme}</div></div>${f.referenceJira?`<div class="info-row"><div class="info-label">Référence JIRA :</div><div>${f.referenceJira}</div></div>`:''}<div class="info-row"><div class="info-label">Formateur :</div><div>${f.nomFormateur}</div></div><div class="info-row"><div class="info-label">Date :</div><div>${new Date(f.date).toLocaleDateString('fr-FR')}</div></div><div class="info-row"><div class="info-label">Type :</div><div>${f.type}</div></div><div class="info-row"><div class="info-label">Horaires :</div><div>${f.heureDebut} - ${f.heureFin}</div></div><div class="info-row"><div class="info-label">Nombre de stagiaires :</div><div>${f.stagiaires.length}</div></div>`; }
+      function displayPresenceForm(){ const c=document.getElementById('presenceList'); c.innerHTML=''; currentFormationData.stagiaires.forEach((s,idx)=>{ const div=document.createElement('div'); div.className='stagiaire-item'; div.innerHTML=`<div class="stagiaire-header"><span class="stagiaire-number">${s.nom}</span></div><div class="form-group"><label>Présence *</label><div class="radio-group"><label class="radio-item"><input type="radio" name="presence${idx}" value="Present" required><span>✅ Present</span></label><label class="radio-item"><input type="radio" name="presence${idx}" value="Absent" required><span>❌ Absent</span></label><label class="radio-item"><input type="radio" name="presence${idx}" value="Partielle" required><span>⚠️ Partielle</span></label></div></div><div class="form-group"><label>Commentaire du formateur</label><textarea id="commentaire${idx}" rows="2" placeholder="Observations particulières sur ce stagiaire..."></textarea></div>`; c.appendChild(div); }); }
+      function handlePresenceSubmit(){ currentFormationData.stagiaires.forEach((s,idx)=>{ const pres=document.getElementsByName('presence'+idx); const com=document.getElementById('commentaire'+idx); let val=null; pres.forEach(i=>{ if(i.checked) val=i.value; }); s.presence=val; s.commentaire=com?com.value.trim():''; }); saveFormations(); document.getElementById('postFormationSection').style.display='none'; emailSubjectGlobal=''; emailBodyGlobal=''; generateEmailLinks(); window.scrollTo(0,0); }
+      function generateEmailLinks(){ const container=document.getElementById('emailLinks'); const f=currentFormationData; sendPresenceDataToSharePoint(f.id, f.stagiaires.map(s=>({ StagiaireID:s.id, Nom:s.nom, Email:s.email, Presence:s.presence||'Non renseigné', CommentaireFormateur:s.commentaire||'' }))); const dateFormation=new Date(f.date).toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); if(!emailSubjectGlobal){ emailSubjectGlobal=`Votre formation ${f.theme} - attestation et enquête de satisfaction`; } if(!emailBodyGlobal){ emailBodyGlobal=`Bonjour,\n\nVous avez participé à la formation « ${f.theme} » animée par ${f.nomFormateur} le ${dateFormation}.\n\nAfin de finaliser votre dossier, nous vous invitons à cliquer sur le lien ci-dessous. Vous y trouverez :\n• votre attestation de présence,\n• ainsi qu'une brève enquête de satisfaction (moins d'une minute à remplir).\n\n👉 [LIEN]\n\nNous vous remercions pour votre participation et restons à votre disposition pour toute question complémentaire.\n\nBien cordialement,`; }
+        container.innerHTML=`<h2 style="margin-bottom: 20px; color: #3270AF;">📧 Envoi des liens aux stagiaires</h2><div class="alert alert-success" style="margin-bottom: 30px;">✅ Les présences ont été enregistrées avec succès ! Vous pouvez maintenant envoyer les emails aux stagiaires.</div><div style="background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #3270AF; margin-bottom: 20px;"><strong style="color: #3270AF;">📧 Modèle d'email</strong><button class="btn-edit" style="margin-left: 10px;" onclick="openEmailModal()">✏️ Personnaliser l'email</button><div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; font-family: 'Segoe UI', sans-serif;"><div style="margin-bottom: 10px;"><strong>Objet :</strong> ${emailSubjectGlobal}</div><div style="white-space: pre-wrap; color: #666; font-size: 14px;">${emailBodyGlobal.replace('[LIEN]', '<a href="#" style="color: #3270AF; text-decoration: underline;" onclick="event.preventDefault(); alert(\'Ce lien sera remplacé par le lien personnalisé du stagiaire lors de l\\\'envoi de l\\\'email\');">🔗 Lien personnalisé du stagiaire</a>')}</div></div></div><div style="margin-bottom: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #3270AF;"><strong style="color: #3270AF;">📧 Envoi individuel par stagiaire</strong><br><small style="color: #666;">Chaque stagiaire recevra un email avec uniquement son lien personnel</small><div style="margin-top: 15px;" id="individualEmailsList"></div></div>`;
+        const list=document.getElementById('individualEmailsList'); f.stagiaires.forEach((s)=>{ const div=document.createElement('div'); div.style.cssText='background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;'; div.innerHTML=`<div><strong style="color: #333;">${s.nom}</strong><br><small style="color: #666;">${s.email}</small><br><small style="color: #999;">Présence : <strong style="color: ${s.presence==='Present' ? '#28a745' : '#666'};">${s.presence}</strong></small></div><button class="btn" style="margin: 0; padding: 10px 20px; font-size: 14px;" onclick="sendIndividualEmail('${s.id}')">📧 Envoyer l'email</button>`; list.appendChild(div); }); document.getElementById('linksGenerated').style.display='block'; }
+      function openEmailModal(){ document.getElementById('emailSubjectEdit').value=emailSubjectGlobal; document.getElementById('emailBodyEdit').value=emailBodyGlobal; document.getElementById('emailModal').style.display='block'; }
+      function closeEmailModal(){ document.getElementById('emailModal').style.display='none'; }
+      function saveEmailChanges(){ emailSubjectGlobal=document.getElementById('emailSubjectEdit').value; emailBodyGlobal=document.getElementById('emailBodyEdit').value; closeEmailModal(); generateEmailLinks(); }
+      function sendIndividualEmail(stagiaireId){ const f=currentFormationData; const s=f.stagiaires.find(x=>x.id===stagiaireId); if(!s){ alert('❌ Erreur : Stagiaire non trouvé'); return; } (async()=>{ try{ const link=await getSignedLink(f.id, s.id); const subject=encodeURIComponent(emailSubjectGlobal); const body=encodeURIComponent(emailBodyGlobal.replace('[LIEN]', link)); window.location.href=`mailto:${s.email}?subject=${subject}&body=${body}`; } catch(e){ alert('Impossible de générer le lien sécurisé. Réessayez.'); console.error(e); } })(); }
+      let currentReminderFormationId=null; let currentReminderStagiaireId=null; function openReminderModal(formationId, idx){ const f=formationsData.find(x=>x.id===formationId); if(!f) return; const targets=f.stagiaires.filter(s=>(s.presence==='Present'||s.presence==='Partielle') && !s.satisfaction); const s=targets[idx]; if(!s) return; currentReminderFormationId=formationId; currentReminderStagiaireId=s.id; const dateFormation=new Date(f.date).toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); document.getElementById('reminderInfo').innerHTML=`<div class="info-row"><div class="info-label">Formation :</div><div>${f.theme}</div></div><div class="info-row"><div class="info-label">Date :</div><div>${dateFormation}</div></div><div class="info-row"><div class="info-label">Stagiaire :</div><div>${s.nom}</div></div><div class="info-row"><div class="info-label">Email :</div><div>${s.email}</div></div>`; const subject=`Relance - Enquête de satisfaction formation ${f.theme}`; const body=`Bonjour,\n\nLa mesure de votre satisfaction est un élément important pour nous permettre d'évaluer la formation ${f.theme} que vous avez suivie le ${dateFormation}.\n\nAinsi, nous vous remercions de bien vouloir répondre à un rapide questionnaire en cliquant sur le lien : [LIEN]\n\nVous souhaitant une très bonne journée,\nTrès Cordialement`; document.getElementById('reminderSubjectEdit').value=subject; document.getElementById('reminderBodyEdit').value=body; document.getElementById('reminderModal').style.display='block'; }
+      function closeReminderModal(){ document.getElementById('reminderModal').style.display='none'; currentReminderFormationId=null; currentReminderStagiaireId=null; }
+      function sendReminder(){ if(!currentReminderFormationId||!currentReminderStagiaireId) return; const f=formationsData.find(x=>x.id===currentReminderFormationId); if(!f) return; const s=f.stagiaires.find(x=>x.id===currentReminderStagiaireId); if(!s) return; (async()=>{ try{ const link=await getSignedLink(f.id, s.id); const subject=document.getElementById('reminderSubjectEdit').value; const body=document.getElementById('reminderBodyEdit').value.replace('[LIEN]', link); const mailto=`mailto:${s.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; window.location.href=mailto; } catch(e){ alert('Impossible de générer le lien sécurisé pour la relance.'); console.error(e); } finally{ closeReminderModal(); } })(); }
+      function checkURLParams(){ const p=new URLSearchParams(window.location.search); const fid=p.get('fid'); const stid=p.get('stid'); if(fid&&stid){ const tabs=document.querySelectorAll('.tab'); tabs.forEach(t=>{ if(t.getAttribute('data-tab')!=='stagiaire'){ t.style.display='none'; } }); switchTab('stagiaire'); loadStagiaireView(fid, stid); } }
+      async function loadStagiaireView(fid, stid){ let formation=formationsData.find(f=>f.id===fid); if(!formation){ document.getElementById('infoFormation').innerHTML=`<div class="alert" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">❌ Formation non trouvée ou lien invalide.</div>`; return; } const s=formation.stagiaires.find(x=>x.id===stid); if(!s){ document.getElementById('infoFormation').innerHTML=`<div class="alert" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">❌ Stagiaire non trouvé ou lien invalide.</div>`; return; } if(s.satisfaction){ displayThankYouMessage(); return; } const dateFormation=new Date(formation.date).toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); const presenceValue=s.Presence||s.presence||'Non renseigné'; const commentaireValue=s.CommentaireFormateur||s.commentaire||''; document.getElementById('infoFormation').innerHTML=`<h3 style="color: #3270AF; margin-bottom: 15px;">✅ Attestation de présence</h3><div class="info-row"><div class="info-label">Formation :</div><div>${formation.theme}</div></div><div class="info-row"><div class="info-label">Date :</div><div>${dateFormation}</div></div><div class="info-row"><div class="info-label">Horaires :</div><div>${formation.heureDebut} - ${formation.heureFin}</div></div><div class="info-row"><div class="info-label">Formateur :</div><div>${formation.nomFormateur}</div></div><div class="info-row"><div class="info-label">Client :</div><div>${formation.raisonSociale}</div></div><div class="info-row"><div class="info-label">Stagiaire :</div><div>${s.nom}</div></div><div class="info-row"><div class="info-label">Présence :</div><div style="color: ${presenceValue==='Present' ? '#28a745' : (presenceValue==='Non renseigné' ? '#666' : '#dc3545')};">${presenceValue}</div></div><div class="info-row"><div class="info-label">Commentaire Formateur :</div><div>${commentaireValue || '<em style="color: #999;">Aucun commentaire</em>'}</div></div>`; if(presenceValue!=='Absent' && presenceValue!=='Non renseigné'){ document.getElementById('satisfactionForm').style.display='block'; document.getElementById('satisfactionForm').onsubmit=function(e){ e.preventDefault(); handleSatisfactionSubmit(fid, stid); }; } else { document.getElementById('infoFormation').innerHTML+=`<div class="alert alert-warning" style="margin-top: 20px;">ℹ️ Vous avez été marqué(e) comme "Absent". L'enquête de satisfaction n'est disponible que pour les stagiaires présents ou partiellement présents.</div>`; }
+      }
+      function initStarRatings(){['q1','q2','q3'].forEach(q=>{ const c=document.getElementById(q+'Stars'); if(!c) return; for(let i=1;i<=5;i++){ const s=document.createElement('span'); s.className='star'; s.innerHTML='★'; s.dataset.value=i; s.dataset.question=q; s.addEventListener('click',function(){ document.getElementById(this.dataset.question).value=this.dataset.value; updateStars(this.dataset.question, this.dataset.value); checkSatisfactionFormValidity(); }); c.appendChild(s); } }); document.querySelectorAll('input[name="q4"], input[name="q5"]').forEach(r=>{ r.addEventListener('change', checkSatisfactionFormValidity); }); }
+      function updateStars(qId,val){ const stars=document.querySelectorAll('#'+qId+'Stars .star'); stars.forEach((s,idx)=>{ if(idx<val){ s.classList.add('active'); } else { s.classList.remove('active'); } }); }
+      function checkSatisfactionFormValidity(){ const q1=document.getElementById('q1').value; const q2=document.getElementById('q2').value; const q3=document.getElementById('q3').value; const q4=document.querySelector('input[name="q4"]:checked'); const q5=document.querySelector('input[name="q5"]:checked'); const btn=document.getElementById('submitSatisfactionBtn'); if(q1&&q2&&q3&&q4&&q5){ btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer'; } else { btn.disabled=true; btn.style.opacity='0.5'; btn.style.cursor='not-allowed'; } }
+      function initCharCounters(){ ['q6','q7'].forEach(id=>{ const ta=document.getElementById(id); const c=document.getElementById(id+'Count'); if(ta&&c){ ta.addEventListener('input', function(){ const remaining=100-this.value.length; c.textContent=remaining; c.style.color=(remaining<20?'#dc3545':'#666'); }); }}); }
+      function handleSatisfactionSubmit(fid, stid){ const q4=document.querySelector('input[name="q4"]:checked'); const q5=document.querySelector('input[name="q5"]:checked'); if(!q4||!q5){ alert('⚠️ Veuillez répondre à toutes les questions obligatoires (*)'); return; } const q1=parseInt(document.getElementById('q1').value); const q2=parseInt(document.getElementById('q2').value); const q3=parseInt(document.getElementById('q3').value); let q4Score=0; switch(q4.value){ case 'Pas du tout': q4Score=0; break; case 'Un peu': q4Score=1; break; case 'Moyennement': q4Score=2; break; case 'Assez': q4Score=3; break; case 'Tout à fait': q4Score=5; break; } let q5Score=0; switch(q5.value){ case 'Trop courte': q5Score=0; break; case 'Adaptée': q5Score=5; break; case 'Trop longue': q5Score=3; break; } const total=q1+q2+q3+q4Score+q5Score; const noteGlobale=(total/5).toFixed(2); const satisfaction={ q1, q2, q3, q4:q4.value, q5:q5.value, q6:document.getElementById('q6').value, q7:document.getElementById('q7').value, noteGlobale, dateEnvoi:new Date().toISOString() };
+        const formation=formationsData.find(f=>f.id===fid); if(formation){ const s=formation.stagiaires.find(x=>x.id===stid); if(s){ s.satisfaction=satisfaction; saveFormations(); } }
+        // Envoi satisfaction via Logic App
+        sendSatisfactionToSharePoint({ FormationID: fid, StagiaireID: stid, NomStagiaire: (formationsData.find(f=>f.id===fid)?.stagiaires.find(x=>x.id===stid)?.nom)||'', Q1:q1, Q2:q2, Q3:q3, Q4:q4Score, Q5:q5Score, Suggestions: document.getElementById('q6').value||'', CommentairesStagiaire: document.getElementById('q7').value||'' });
+        let msg=''; if(noteGlobale<3){ msg='Nous sommes désolés de cette appréciation, nous allons revenir vers vous pour comprendre cette évaluation.'; } else if(noteGlobale>=3 && noteGlobale<=4.5){ msg='Merci pour cette appréciation, votre retour va nous permettre de nous améliorer.'; } else { msg='Merci ! Cette bonne note nous encourage à continuer à travailler pour votre satisfaction.'; }
+        displayThankYouMessage(noteGlobale, msg);
+      }
+      function displayThankYouMessage(noteGlobale, message){ document.getElementById('infoFormation').style.display='none'; document.getElementById('satisfactionForm').style.display='none'; document.getElementById('attestationTitle').style.display='none'; const thankYou=document.getElementById('thankYouMessage'); if(!noteGlobale && !message){ thankYou.innerHTML=`<div class="alert alert-success"><h3 style="margin-bottom: 15px;">✅ Merci pour votre participation !</h3><p style="font-size: 18px; margin: 15px 0;"><strong>Vous avez déjà répondu à l'enquête de satisfaction.</strong></p></div>`; } else { thankYou.innerHTML=`<div class="alert alert-success"><h3 style="margin-bottom: 15px;">✅ Merci pour votre participation !</h3><p style="font-size: 18px; margin: 15px 0;"><strong>Votre avis compte beaucoup pour nous.</strong></p><p style="font-size: 20px; margin: 15px 0; color: #3270AF;"><strong>Votre appréciation globale est de ${noteGlobale} sur 5.</strong></p><p style="margin-top: 15px;">${message}</p></div>`; } thankYou.style.display='block'; }
+      function saveFormations(){ localStorage.setItem('wenegoce_formations', JSON.stringify(formationsData)); }
+      function loadFormations(){ const saved=localStorage.getItem('wenegoce_formations'); if(saved){ try{ formationsData=JSON.parse(saved); } catch(e){ console.error('Erreur lors du chargement des données:', e); formationsData=[]; } } }
+      function initializeSettings(){ updateFormationCount(); }
+      function updateFormationCount(){ document.getElementById('formationCount')?.textContent = formationsData.length; }
+    </script>
+
+    <!-- ======================== FM v2.2 – Full Microsoft (Logic Apps) ======================== -->
+    <script id="fm-logicapps-endpoints">
+    // URLs Logic Apps (fournies)
+    const LA_FORMATION_URL    = "https://prod-01.francecentral.logic.azure.com:443/workflows/2ed0a1ded8c04bdb919956463f324d76/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=xdDuSi6kyJazxW0euPSUkEowfVgIrgxfAQ6a6Ogejg0";
+    const LA_PRESENCE_URL     = "https://prod-02.francecentral.logic.azure.com:443/workflows/a108ca6c917a4197ba14e2674ff31b44/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=zOjl38vl1AXhyV25ZGW_01wVLwXZwftceAYxyk8gjro";
+    const LA_SATISFACTION_URL = "https://prod-20.francecentral.logic.azure.com:443/workflows/bad15f005ef64adab56e14fd436b8a1f/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=6iHn4hVguX6pLJFyTTvbq4ujoMwF0dnCgRfy7k7hiKA";
+
+    async function postJSON(url, payload){ const res=await fetch(url,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload||{}) }); if(!res.ok){ const txt=await res.text().catch(()=>""); throw new Error(`HTTP ${res.status} – ${txt}`); } return res.json().catch(()=>({})); }
+    function assertUrl(name,url){ if(!url||typeof url!=='string'||!/^https?:\/\//.test(url)){ throw new Error(`URL manquante pour ${name}. Renseigne l'URL de la Logic App dans le bloc fm-logicapps-endpoints.`); } }
+
+    // Surcharges via localStorage (admin)
+    function lsOr(key, def){ try { return localStorage.getItem(key) || def; } catch(e){ return def; } }
+    window.FM_ENDPOINTS = {
+      formation: lsOr('FM_LA_FORMATION_URL', LA_FORMATION_URL),
+      presence: lsOr('FM_LA_PRESENCE_URL', LA_PRESENCE_URL),
+      satisfaction: lsOr('FM_LA_SATISFACTION_URL', LA_SATISFACTION_URL)
+    };
+
+    // API publiques utilisées par l'app
+    async function sendSatisfactionToSharePoint(sat){ assertUrl('LA_SATISFACTION_URL', FM_ENDPOINTS.satisfaction); const payload={ FormationID: sat?.FormationID??"", StagiaireID: sat?.StagiaireID??"", NomStagiaire: sat?.NomStagiaire??"", Q1: Number(sat?.Q1??0), Q2: Number(sat?.Q2??0), Q3: Number(sat?.Q3??0), Q4: Number(sat?.Q4??0), Q5: Number(sat?.Q5??0), Suggestions: sat?.Suggestions??"", CommentairesStagiaire: sat?.CommentairesStagiaire??"" }; return postJSON(FM_ENDPOINTS.satisfaction, payload); }
+    async function sendFormationToSharePoint(formation){ assertUrl('LA_FORMATION_URL', FM_ENDPOINTS.formation); const payload={ FormationID: formation?.FormationID??"", Titre: formation?.Titre??"", Date: formation?.Date??"", Formateur: formation?.Formateur??"", HeureDebut: formation?.HeureDebut??"", HeureFin: formation?.HeureFin??"", Client: formation?.Client??"" }; return postJSON(FM_ENDPOINTS.formation, payload); }
+    async function sendPresenceDataToSharePoint(formationId, presences){ assertUrl('LA_PRESENCE_URL', FM_ENDPOINTS.presence); const payload={ FormationID: formationId??"", Presences: Array.isArray(presences)?presences:[] }; return postJSON(FM_ENDPOINTS.presence, payload); }
+    </script>
+    <!-- ====================== /FM v2.2 – Full Microsoft (Logic Apps) ======================= -->
+
+    <!-- === Formation Manager – Admin Config (v2.4.3) =============================== -->
+    <style>
+      #adminConfig { display:none; max-width:860px; margin:40px auto; padding:24px; border:1px solid #e5e7eb; border-radius:16px; }
+      #adminConfig h2 { margin:0 0 12px 0; font-size:22px; }
+      #adminConfig .row { display:grid; grid-template-columns: 180px 1fr; gap:12px; align-items:center; margin:8px 0; }
+      #adminConfig input[type="text"] { width:100%; padding:10px; border:1px solid #d1d5db; border-radius:10px; }
+      #adminConfig .btns { display:flex; gap:12px; margin-top:16px; }
+      #adminConfig button { padding:10px 14px; border-radius:10px; border:1px solid #d1d5db; cursor:pointer; }
+      #adminGate { text-align:center; margin:32px 0; display:none; }
+      #adminGate .hint { color:#666; font-size:14px; margin-top:6px; }
+    </style>
+
+    <section id="adminConfig">
+      <h2>Configuration des Logic Apps</h2>
+      <p>Ces paramètres sont stockés dans <code>localStorage</code> sur ce navigateur et surchargent les valeurs intégrées.</p>
+      <div class="row"><label for="cfgFormation">URL Formation</label><input id="cfgFormation" type="text"></div>
+      <div class="row"><label for="cfgPresence">URL Présence</label><input id="cfgPresence" type="text"></div>
+      <div class="row"><label for="cfgSatisfaction">URL Satisfaction</label><input id="cfgSatisfaction" type="text"></div>
+      <div class="btns">
+        <button id="cfgSave">Enregistrer</button>
+        <button id="cfgReset">Réinitialiser</button>
+        <button id="cfgTest">Tester (ping)</button>
+      </div>
+    </section>
+
+    <div id="adminGate">
+      <p>Accès admin requis. Connectez‑vous Microsoft 365 pour modifier la configuration.</p>
+      <button id="msLoginBtn">Se connecter</button>
+      <div class="hint">Rôle requis : <strong>FM.Admin</strong></div>
+    </div>
+
+    <!-- MSAL Browser -->
+    <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js" integrity="sha384-9t7l6C8iPqf4n6j0aV8VZCx1yNw4D6n3C3Qy8y7l8uR0p3Tq9mDkSxq4x2oM0n8Y" crossorigin="anonymous"></script>
+    <script>
+      // MSAL config (Tenant + App clientId fournis)
+      const msalConfig = {
+        auth: {
+          clientId: 'e270fde7-2324-487e-8cb4-c249dbafa968', // FormationManager-Client
+          authority: 'https://login.microsoftonline.com/bc9934d3-8db6-47e6-a844-a32a407400c2', // TENANT_ID
+          redirectUri: 'https://app.formation-manager.wenegoce.fr/'
+        },
+        cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: false }
+      };
+      const msalInstance = new msal.PublicClientApplication(msalConfig);
+      const loginRequest = { scopes: ['User.Read'] };
+
+      function showAdmin(yes){ document.getElementById('adminGate').style.display = yes? 'none':'block'; document.getElementById('adminConfig').style.display = yes? 'block':'none'; if(yes){ document.getElementById('cfgFormation').value = FM_ENDPOINTS.formation||''; document.getElementById('cfgPresence').value = FM_ENDPOINTS.presence||''; document.getElementById('cfgSatisfaction').value = FM_ENDPOINTS.satisfaction||''; } }
+
+      async function ensureLoggedIn(){ try{
+        const accounts = msalInstance.getAllAccounts();
+        if(accounts.length>0){ return accounts[0]; }
+        const res = await msalInstance.loginPopup(loginRequest);
+        return res.account;
+      } catch(e){ console.warn('Login annulé/échoué', e); return null; } }
+
+      function hasAdminRole(account){ try {
+        const idToken = msalInstance.getActiveAccount()?.idTokenClaims || account?.idTokenClaims; // MSAL garde les claims
+        const roles = idToken?.roles || idToken?.['roles'] || [];
+        return Array.isArray(roles) && roles.includes('FM.Admin');
+      } catch(e){ return false; }
+      }
+
+      // Gestion du hash #admin
+      function onHash(){ const isAdminHash = location.hash === '#admin'; const gate = document.getElementById('adminGate'); const cfg = document.getElementById('adminConfig'); if(!isAdminHash){ gate.style.display='none'; cfg.style.display='none'; return; } gate.style.display='block'; cfg.style.display='none'; }
+      window.addEventListener('hashchange', onHash);
+      document.addEventListener('DOMContentLoaded', onHash);
+
+      // Bouton login
+      document.addEventListener('click', async (e)=>{
+        if(e.target && e.target.id==='msLoginBtn'){
+          const acct = await ensureLoggedIn();
+          if(!acct){ return; }
+          // Définir l'active account
+          msalInstance.setActiveAccount(acct);
+          if(hasAdminRole(acct)){
+            showAdmin(true);
+          } else {
+            alert('Vous êtes authentifié, mais vous ne disposez pas du rôle FM.Admin.');
+          }
+        }
+      });
+
+      // Boutons Config
+      document.addEventListener('DOMContentLoaded', function(){
+        document.getElementById('cfgSave')?.addEventListener('click', function(){
+          localStorage.setItem('FM_LA_FORMATION_URL', document.getElementById('cfgFormation').value.trim());
+          localStorage.setItem('FM_LA_PRESENCE_URL', document.getElementById('cfgPresence').value.trim());
+          localStorage.setItem('FM_LA_SATISFACTION_URL', document.getElementById('cfgSatisfaction').value.trim());
+          alert('Configurations enregistrées (localStorage).');
+          // Maj des endpoints courants
+          window.FM_ENDPOINTS.formation = localStorage.getItem('FM_LA_FORMATION_URL') || window.FM_ENDPOINTS.formation;
+          window.FM_ENDPOINTS.presence = localStorage.getItem('FM_LA_PRESENCE_URL') || window.FM_ENDPOINTS.presence;
+          window.FM_ENDPOINTS.satisfaction = localStorage.getItem('FM_LA_SATISFACTION_URL') || window.FM_ENDPOINTS.satisfaction;
+        });
+        document.getElementById('cfgReset')?.addEventListener('click', function(){
+          localStorage.removeItem('FM_LA_FORMATION_URL');
+          localStorage.removeItem('FM_LA_PRESENCE_URL');
+          localStorage.removeItem('FM_LA_SATISFACTION_URL');
+          alert('Réinitialisé – les valeurs intégrées seront utilisées après rechargement.');
+        });
+        document.getElementById('cfgTest')?.addEventListener('click', async function(){
+          const url = document.getElementById('cfgFormation').value.trim();
+          if(!url) return alert('Renseignez au moins l’URL Formation pour le test.');
+          try{ const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' }); alert('Ping HTTP status: '+res.status); } catch(err){ alert('Échec du ping: '+err.message); }
+        });
+      });
+    </script>
+</body>
+</html>
