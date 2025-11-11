@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
+<script src="https://alcdn.msauth.net/browser/2.45.0/js/msal-browser.min.js" defer></script>
+<script defer>
+  window.addEventListener('DOMContentLoaded', () => {
+    const msalConfig = {
+      auth: {
+        clientId: "e270fde7-2324-487e-8cb4-c249dbafa968",
+        authority: "https://login.microsoftonline.com/bc9934d3-8db6-47e6-a844-a32a407400c2",
+        redirectUri: "https://app.formation-manager.wenegoce.fr/"
+      },
+      cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
+    };
+    window.msalInstance = new msal.PublicClientApplication(msalConfig);
+  });
+</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
