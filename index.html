@@ -1,5 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr">
+    <script src="https://alcdn.msauth.net/browser/2.45.0/js/msal-browser.min.js" defer></script>
+<script defer>
+  window.addEventListener('DOMContentLoaded', () => {
+    const msalConfig = {
+      auth: {
+        clientId: "e270fde7-2324-487e-8cb4-c249dbafa968",
+        authority: "https://login.microsoftonline.com/bc9934d3-8db6-47e6-a844-a32a407400c2",
+        redirectUri: "https://app.formation-manager.wenegoce.fr/"
+      },
+      cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
+    };
+    window.msalInstance = new msal.PublicClientApplication(msalConfig);
+  });
+</script>
+<script>
+  /* === Formation Manager – Webhooks Azure figés === */
+  const AZ_FM_CREATE_FORMATION =
+    "https://prod-01.francecentral.logic.azure.com:443/workflows/2ed0a1ded8c04bdb919956463f324d76/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=xdDuSi6kyJazxW0euPSUkEowfVgIrgxfAQ6a6Ogejg0";
+
+  const AZ_FM_CREATE_PRESENCE =
+    "https://prod-02.francecentral.logic.azure.com:443/workflows/a108ca6c917a4197ba14e2674ff31b44/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=zOjl38vl1AXhyV25ZGW_01wVLwXZwftceAYxyk8gjro";
+
+  const AZ_LA_FORMATION_MANAGER =
+    "https://prod-20.francecentral.logic.azure.com:443/workflows/bad15f005ef64adab56e14fd436b8a1f/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=6iHn4hVguX6pLJFyTTvbq4ujoMwF0dnCgRfy7k7hiKA";
+
+  /* Résolveur central : renvoie toujours les URL Azure ci-dessus */
+  function getWebhookUrl(kind) {
+    switch (kind) {
+      case "createFormation": return AZ_FM_CREATE_FORMATION;
+      case "createPresence":  return AZ_FM_CREATE_PRESENCE;
+      case "formationManager":return AZ_LA_FORMATION_MANAGER;
+      default: throw new Error("Webhook inconnu : " + kind);
+    }
+  }
+</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1292,7 +1327,12 @@
                 }
             }
         }
-
+        // Convertit "DD/MM/YYYY" -> "YYYY-MM-DD" (ou "" si vide/mal formé)
+        function toISO(dFR) {
+            const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((dFR || '').trim());
+            return m ? `${m[3]}-${m[2]}-${m[1]}` : "";
+        }
+        
         function showError(input, message) {
             input.style.borderColor = '#dc3545';
             
@@ -2246,65 +2286,6 @@
             displayThankYouMessage(noteGlobale, message);
         }
 
-        function sendToMake(formation, stagiaire, stagiaireIndex) {
-            // Créer des dates complètes pour les heures (format ISO 8601)
-            const dateFormation = formation.date; // Format: YYYY-MM-DD
-            const heureDebutISO = `${dateFormation}T${formation.heureDebut}:00`;
-            const heureFinISO = `${dateFormation}T${formation.heureFin}:00`;
-            
-            const payload = {
-                formationId: formation.id,
-                date: new Date(formation.date).toLocaleDateString('fr-FR'),
-                client: formation.raisonSociale,
-                formation: formation.theme,
-                referenceJira: formation.referenceJira || '',
-                formateur: formation.nomFormateur,
-                type: formation.type,
-                heureDebut: heureDebutISO,
-                heureFin: heureFinISO,
-                stagiaireNom: stagiaire.nom,
-                stagiaireEmail: stagiaire.email,
-                presence: stagiaire.presence,
-                commentaireFormateur: stagiaire.commentaire,
-                q1: stagiaire.satisfaction.q1,
-                q2: stagiaire.satisfaction.q2,
-                q3: stagiaire.satisfaction.q3,
-                q4: stagiaire.satisfaction.q4,
-                q5: stagiaire.satisfaction.q5,
-                suggestions: stagiaire.satisfaction.q6,
-                commentaire: stagiaire.satisfaction.q7,
-                noteGlobale: stagiaire.satisfaction.noteGlobale,
-                dateReponse: new Date(stagiaire.satisfaction.dateEnvoi).toLocaleDateString('fr-FR')
-            };
-            
-            console.log('📤 Envoi des données vers Make:', payload);
-            console.log('🔑 Authentification avec clé:', API_KEY);
-            
-            fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-make-apikey': API_KEY
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(response => {
-                console.log('📥 Réponse de Make:', response.status, response.statusText);
-                if (response.ok) {
-                    console.log('✅ Données envoyées à Make avec succès');
-                } else {
-                    console.error('❌ Erreur lors de l\'envoi vers Make:', response.status, response.statusText);
-                }
-                return response.text();
-            })
-            .then(text => {
-                if (text) console.log('Réponse Make:', text);
-            })
-            .catch(error => {
-                console.error('❌ Erreur lors de l\'envoi vers Make:', error);
-            });
-        }
-
         function displayThankYouMessage(noteGlobale, message) {
             document.getElementById('infoFormation').style.display = 'none';
             document.getElementById('satisfactionForm').style.display = 'none';
@@ -2430,20 +2411,6 @@
             if (!autoExport) {
                 console.log('Export Excel généré : ' + fileName);
             }
-        }
-
-        // ========================================
-        // GESTION DES PARAMÈTRES MAKE
-        // ========================================
-        function initializeSettings() {
-            document.getElementById('enableSharePointSync').checked = ENABLE_SHAREPOINT_SYNC;
-            document.getElementById('webhookInput').value = WEBHOOK_URL;
-            document.getElementById('webhookGetInput').value = WEBHOOK_GET_URL;
-            document.getElementById('apiKeyInput').value = API_KEY;
-            updateWebhookDisplay();
-            updateWebhookGetDisplay();
-            updateAPIKeyDisplay();
-            updateFormationCount();
         }
 
         function updateWebhookDisplay() {
@@ -2586,19 +2553,6 @@
         
         async function sendFormationToSharePoint(formation) {
             try {
-                // Transformer les données au format attendu par SharePoint/Make
-                const sharePointData = {
-                    FormationID: formation.id,
-                    RaisonSociale: formation.raisonSociale,
-                    ThemeFormation: formation.theme,
-                    ReferenceJira: formation.referenceJira || '',
-                    NomFormateur: formation.nomFormateur,
-                    DateFormation: formation.date,
-                    TypeFormation: formation.type,
-                    HeureDebut: formation.heureDebut,
-                    HeureFin: formation.heureFin,
-                    Stagiaires: formation.stagiaires  // Envoyer comme array, pas comme string
-                };
 
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
