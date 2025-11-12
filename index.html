@@ -2782,48 +2782,18 @@
         // ========================================
         // NOUVELLE FONCTION v2.5.0 : ENVOI DES DONNÉES DE PRÉSENCE ET COMMENTAIRES
         // ========================================
+        async function sendPresenceDataToSharePoint(formationId, stagiaires) {
+        const payload = { FormationID: formationId, Stagiaires: stagiaires };
+        const res = await fetch(WEBHOOK_PRESENCE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+        });
+        }      
         async function sendPresenceDataToSharePoint(formation) {
             // Vérifier si la synchronisation SharePoint est activée
             if (!ENABLE_SHAREPOINT_SYNC || !WEBHOOK_URL) {
-                console.log('ℹ️ Synchronisation SharePoint désactivée ou webhook non configuré');
-                return false;
-            }
-
-            try {
-                // Préparer les données à envoyer : ID formation + données de chaque stagiaire
-                const presenceData = {
-                    FormationID: formation.id,
-                    Stagiaires: formation.stagiaires.map(stagiaire => ({
-                        StagiaireID: stagiaire.id,
-                        Nom: stagiaire.nom,
-                        Email: stagiaire.email,
-                        Presence: stagiaire.presence || 'Non renseigné',
-                        CommentaireFormateur: stagiaire.commentaire || ''
-                    }))
-                };
-
-                console.log('📤 Envoi des données de présence à SharePoint:', presenceData);
-
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-make-apikey': API_KEY
-                    },
-                    body: JSON.stringify(presenceData)
-                });
-                
-                if (response.ok) {
-                    console.log('✅ Données de présence envoyées à SharePoint avec succès');
-                    return true;
-                } else {
-                    console.error('❌ Erreur lors de l\'envoi des données de présence:', response.status);
-                    return false;
-                }
-            } catch (error) {
-                console.error('❌ Erreur réseau lors de l\'envoi des données de présence:', error);
-                return false;
-            }
+                console.log('ℹ️ Synchronisation SharePoint désa
         }
     
   // ==== Azure payload helpers (v2.5.13) ====
