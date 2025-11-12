@@ -154,7 +154,7 @@
             </div>
             <div class="form-group">
               <label>Thème de la formation *</label>
-              <input type="text" id="themeFormation" required>
+              <input type="text" id="theme" required>
             </div>
             <div class="form-group">
               <label>Référence JIRA</label>
@@ -396,7 +396,7 @@
     document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',function(){switchTab(this.getAttribute('data-tab'));}));
     const btnAdd=document.getElementById('btnAddStagiaire'); if(btnAdd) btnAdd.addEventListener('click',e=>{e.preventDefault(); addStagiaire();});
     const formateurForm=document.getElementById('formateurForm'); if(formateurForm) formateurForm.addEventListener('submit',e=>{e.preventDefault(); handleFormateurSubmit();});
-    ['raisonSociale','themeFormation','nomFormateur','dateFormation','heureDebut','heureFin'].forEach(id=>{const f=document.getElementById(id); if(!f) return; f.addEventListener('blur',()=>validateRequiredField(f)); f.addEventListener('input',()=>{if(f.value.trim()) clearError(f);});});
+    ['raisonSociale','theme','nomFormateur','dateFormation','heureDebut','heureFin'].forEach(id=>{const f=document.getElementById(id); if(!f) return; f.addEventListener('blur',()=>validateRequiredField(f)); f.addEventListener('input',()=>{if(f.value.trim()) clearError(f);});});
     const hd=document.getElementById('heureDebut'), hf=document.getElementById('heureFin'); if(hd) hd.addEventListener('change',validateHeures); if(hf){hf.addEventListener('change',validateHeures); hf.addEventListener('blur',validateHeures);} 
     const df=document.getElementById('dateFormation'); if(df) df.addEventListener('change',validateDateFormation);
     const presenceForm=document.getElementById('presenceForm'); if(presenceForm) presenceForm.addEventListener('submit',e=>{e.preventDefault(); handlePresenceSubmit();});
@@ -431,7 +431,7 @@
   // ===== Submit formation -> Azure =====
   async function handleFormateurSubmit(){
     const raisonSociale=document.getElementById('raisonSociale').value.trim();
-    const theme=document.getElementById('themeFormation').value.trim();
+    const theme=document.getElementById('theme').value.trim();
     const referenceJira=document.getElementById('referenceJira').value.trim();
     const nomFormateur=document.getElementById('nomFormateur').value.trim();
     const dateFormation=document.getElementById('dateFormation').value;
@@ -619,7 +619,7 @@
 
   function transformAzureFormation(sp){if(!sp) return null; let stagiaires=[]; if(sp.Stagiaires!==undefined){const raw=sp.Stagiaires; if(typeof raw==='string'){try{stagiaires=JSON.parse(raw)}catch{stagiaires=[]}} else if(Array.isArray(raw)){stagiaires=raw} else if(raw&&typeof raw==='object'){stagiaires=[raw]}} else if(sp.stagiaires){stagiaires=sp.stagiaires}
     let date=sp.DateFormation||sp.Date||sp.date; if(date && typeof date==='string' && date.includes('T')) date=date.split('T')[0];
-    return {id:sp.FormationID||sp.id, raisonSociale:sp.RaisonSociale||sp.Client||sp.raisonSociale||'', theme:sp.Theme||sp.ThemeFormation||sp.theme||'', referenceJira:sp.ReferenceJIRA||sp.ReferenceJira||sp.referenceJira||'', nomFormateur:sp.Formateur||sp.NomFormateur||sp.nomFormateur||'', date:date||'', type:sp.TypeFormation||sp.type||'', heureDebut:sp.HeureDebut||sp.heureDebut||'', heureFin:sp.HeureFin||sp.heureFin||'', stagiaires};
+    return {id:sp.FormationID||sp.id, raisonSociale:sp.RaisonSociale||sp.Client||sp.raisonSociale||'', theme:sp.Theme||sp.Theme||sp.theme||'', referenceJira:sp.ReferenceJIRA||sp.ReferenceJira||sp.referenceJira||'', nomFormateur:sp.Formateur||sp.NomFormateur||sp.nomFormateur||'', date:date||'', type:sp.TypeFormation||sp.type||'', heureDebut:sp.HeureDebut||sp.heureDebut||'', heureFin:sp.HeureFin||sp.heureFin||'', stagiaires};
   }
 
   // ===== Modales email =====
