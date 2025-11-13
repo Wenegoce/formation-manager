@@ -462,31 +462,40 @@
     const btn=document.querySelector('#formateurForm button[type="submit"]'); const txt=btn.innerHTML; btn.disabled=true; btn.innerHTML='⏳ Enregistrement en cours...';
     try{
       const payload={
-        action: 'CreateFormation',
-        FormationID: currentFormationId,
-        RaisonSociale: raisonSociale,
-        Client: raisonSociale,
-        Theme: theme,
-        Formateur: nomFormateur,
-        NomFormateur: nomFormateur,
-        DateFormation: dateFormation,
-        DateISO: toDateISOFromInput(dateFormation),
-        HeureDebut: heureDebut,
-        HeureFin: heureFin,
-        TypeFormation: typeFormation,
-        Statut: 'Planifiée',
-        ReferenceJIRA: referenceJira || '',
-        ReferenceJira: referenceJira || '',
-        Stagiaires: currentFormationData.stagiaires,
-        StagiairesJson: JSON.stringify(currentFormationData.stagiaires || [])
-      };
-      if(ENABLE_SHAREPOINT_SYNC) await postJson(FM_ENDPOINTS.createFormation,payload);
-      formationsData.push(currentFormationData); saveFormations();
-      document.getElementById('preparationForm').style.display='none';
-      document.getElementById('postFormationSection').style.display='block';
-      displayFormationInfo(); displayPresenceForm(); window.scrollTo(0,0);
-    }catch(e){alert('❌ Erreur lors de l\'enregistrement de la formation.\n'+e.message); console.error(e);}finally{btn.disabled=false; btn.innerHTML=txt;}
-  }
+  action: 'CreateFormation',
+  FormationID: currentFormationId,
+
+  // client
+  RaisonSociale: raisonSociale,
+  Client: raisonSociale,
+
+  // thème (ancien + nouveau noms)
+  Theme: theme,
+  ThemeFormation: theme,
+  themeFormation: theme,
+
+  // formateur
+  Formateur: nomFormateur,
+  NomFormateur: nomFormateur,
+
+  // dates / heures
+  DateFormation: dateFormation,
+  DateISO: toDateISOFromInput(dateFormation),
+  HeureDebut: heureDebut,
+  HeureFin: heureFin,
+
+  // autres infos
+  TypeFormation: typeFormation,
+  Statut: 'Planifiée',
+
+  // JIRA (ancien + nouveau noms)
+  ReferenceJIRA: referenceJira || '',
+  ReferenceJira: referenceJira || '',
+
+  // stagiaires
+  Stagiaires: currentFormationData.stagiaires,
+  StagiairesJson: JSON.stringify(currentFormationData.stagiaires || [])
+};
 
   function displayFormationInfo(){const f=currentFormationData; const el=document.getElementById('formationInfo'); el.innerHTML=`
     <div class="info-row"><div class="info-label">Client :</div><div>${f.raisonSociale}</div></div>
