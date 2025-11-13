@@ -642,7 +642,7 @@
   function transformAzureFormation(sp){if(!sp) return null; let stagiaires=[]; if(sp.Stagiaires!==undefined){const raw=sp.Stagiaires; if(typeof raw==='string'){try{stagiaires=JSON.parse(raw)}catch{stagiaires=[]}} else if(Array.isArray(raw)){stagiaires=raw} else if(raw&&typeof raw==='object'){stagiaires=[raw]}} else if(sp.stagiaires){stagiaires=sp.stagiaires}
     let date=sp.DateFormation||sp.Date||sp.date; if(date && typeof date==='string' && date.includes('T')) date=date.split('T')[0];
     return {id:sp.FormationID||sp.id, raisonSociale:sp.RaisonSociale||sp.Client||sp.raisonSociale||'', theme:sp.Theme||sp.Theme||sp.theme||'', referenceJira:sp.ReferenceJIRA||sp.ReferenceJira||sp.referenceJira||'', nomFormateur:sp.Formateur||sp.NomFormateur||sp.nomFormateur||'', date:date||'', type:sp.TypeFormation||sp.type||'', heureDebut:sp.HeureDebut||sp.heureDebut||'', heureFin:sp.HeureFin||sp.heureFin||'', stagiaires};
-  }
+  }}
 
   // ===== Modales email =====
   function openEmailModal(){document.getElementById('emailSubjectEdit').value=emailSubjectGlobal; document.getElementById('emailBodyEdit').value=emailBodyGlobal; document.getElementById('emailModal').style.display='flex';}
