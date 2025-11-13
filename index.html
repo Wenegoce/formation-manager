@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -291,8 +291,8 @@
       </div>
 
       <div class="version-info" style="margin-top:24px;">
-        <div class="version-number">Version 3.1</div>
-        <div class="version-date">12 novembre 2025</div>
+        <div class="version-number">Version 3.1.1</div>
+        <div class="version-date">13 novembre 2025</div>
         <div class="copyright">© 2025 WeNégoce - Tous droits réservés<br>Formation Manager est une solution propriétaire développée par WeNégoce</div>
       </div>
     </div>
@@ -462,10 +462,23 @@
     const btn=document.querySelector('#formateurForm button[type="submit"]'); const txt=btn.innerHTML; btn.disabled=true; btn.innerHTML='⏳ Enregistrement en cours...';
     try{
       const payload={
-        FormationID:currentFormationId, Theme:theme, Formateur:nomFormateur, Client:raisonSociale,
-        DateISO:toDateISOFromInput(dateFormation), HeureDebut:heureDebut, HeureFin:heureFin,
-        TypeFormation:typeFormation, Statut:'Planifiée', ReferenceJIRA:referenceJira||'',
-        Stagiaires:currentFormationData.stagiaires
+        action: 'CreateFormation',
+        FormationID: currentFormationId,
+        RaisonSociale: raisonSociale,
+        Client: raisonSociale,
+        Theme: theme,
+        Formateur: nomFormateur,
+        NomFormateur: nomFormateur,
+        DateFormation: dateFormation,
+        DateISO: toDateISOFromInput(dateFormation),
+        HeureDebut: heureDebut,
+        HeureFin: heureFin,
+        TypeFormation: typeFormation,
+        Statut: 'Planifiée',
+        ReferenceJIRA: referenceJira || '',
+        ReferenceJira: referenceJira || '',
+        Stagiaires: currentFormationData.stagiaires,
+        StagiairesJson: JSON.stringify(currentFormationData.stagiaires || [])
       };
       if(ENABLE_SHAREPOINT_SYNC) await postJson(FM_ENDPOINTS.createFormation,payload);
       formationsData.push(currentFormationData); saveFormations();
